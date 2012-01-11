@@ -1,0 +1,149 @@
+K 25
+svn:wc:ra_dav:version-url
+V 42
+/svn/!svn/ver/2/trunk/src/com/trilead/ssh2
+END
+Connection.java
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/!svn/ver/2/trunk/src/com/trilead/ssh2/Connection.java
+END
+HTTPProxyException.java
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svn/!svn/ver/2/trunk/src/com/trilead/ssh2/HTTPProxyException.java
+END
+SFTPv3FileHandle.java
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/!svn/ver/2/trunk/src/com/trilead/ssh2/SFTPv3FileHandle.java
+END
+DynamicPortForwarder.java
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/!svn/ver/2/trunk/src/com/trilead/ssh2/DynamicPortForwarder.java
+END
+ConnectionMonitor.java
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/!svn/ver/2/trunk/src/com/trilead/ssh2/ConnectionMonitor.java
+END
+ServerHostKeyVerifier.java
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/!svn/ver/2/trunk/src/com/trilead/ssh2/ServerHostKeyVerifier.java
+END
+HTTPProxyData.java
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/!svn/ver/2/trunk/src/com/trilead/ssh2/HTTPProxyData.java
+END
+LocalPortForwarder.java
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svn/!svn/ver/2/trunk/src/com/trilead/ssh2/LocalPortForwarder.java
+END
+ProxyData.java
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svn/!svn/ver/2/trunk/src/com/trilead/ssh2/ProxyData.java
+END
+ConnectionInfo.java
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/!svn/ver/2/trunk/src/com/trilead/ssh2/ConnectionInfo.java
+END
+KnownHosts.java
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/!svn/ver/2/trunk/src/com/trilead/ssh2/KnownHosts.java
+END
+ChannelCondition.java
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/!svn/ver/2/trunk/src/com/trilead/ssh2/ChannelCondition.java
+END
+LocalStreamForwarder.java
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/!svn/ver/2/trunk/src/com/trilead/ssh2/LocalStreamForwarder.java
+END
+DHGexParameters.java
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/!svn/ver/2/trunk/src/com/trilead/ssh2/DHGexParameters.java
+END
+Session.java
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svn/!svn/ver/2/trunk/src/com/trilead/ssh2/Session.java
+END
+SCPClient.java
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svn/!svn/ver/2/trunk/src/com/trilead/ssh2/SCPClient.java
+END
+SFTPv3Client.java
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/!svn/ver/2/trunk/src/com/trilead/ssh2/SFTPv3Client.java
+END
+DebugLogger.java
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/!svn/ver/2/trunk/src/com/trilead/ssh2/DebugLogger.java
+END
+StreamGobbler.java
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/!svn/ver/2/trunk/src/com/trilead/ssh2/StreamGobbler.java
+END
+InteractiveCallback.java
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svn/!svn/ver/2/trunk/src/com/trilead/ssh2/InteractiveCallback.java
+END
+SFTPException.java
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/!svn/ver/2/trunk/src/com/trilead/ssh2/SFTPException.java
+END
+SFTPv3FileAttributes.java
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/!svn/ver/2/trunk/src/com/trilead/ssh2/SFTPv3FileAttributes.java
+END
+SFTPv3DirectoryEntry.java
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/!svn/ver/2/trunk/src/com/trilead/ssh2/SFTPv3DirectoryEntry.java
+END
+AuthAgentCallback.java
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/!svn/ver/2/trunk/src/com/trilead/ssh2/AuthAgentCallback.java
+END

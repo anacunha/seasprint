@@ -1,0 +1,83 @@
+K 25
+svn:wc:ra_dav:version-url
+V 42
+/svn/!svn/ver/2/trunk/src/com/jcraft/jzlib
+END
+Tree.java
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svn/!svn/ver/2/trunk/src/com/jcraft/jzlib/Tree.java
+END
+Inflate.java
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svn/!svn/ver/2/trunk/src/com/jcraft/jzlib/Inflate.java
+END
+ZStreamException.java
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/!svn/ver/2/trunk/src/com/jcraft/jzlib/ZStreamException.java
+END
+Deflate.java
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svn/!svn/ver/2/trunk/src/com/jcraft/jzlib/Deflate.java
+END
+ZStream.java
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svn/!svn/ver/2/trunk/src/com/jcraft/jzlib/ZStream.java
+END
+ZInputStream.java
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/!svn/ver/2/trunk/src/com/jcraft/jzlib/ZInputStream.java
+END
+ZOutputStream.java
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/!svn/ver/2/trunk/src/com/jcraft/jzlib/ZOutputStream.java
+END
+StaticTree.java
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/!svn/ver/2/trunk/src/com/jcraft/jzlib/StaticTree.java
+END
+InfCodes.java
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/svn/!svn/ver/2/trunk/src/com/jcraft/jzlib/InfCodes.java
+END
+JZlib.java
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svn/!svn/ver/2/trunk/src/com/jcraft/jzlib/JZlib.java
+END
+InfBlocks.java
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svn/!svn/ver/2/trunk/src/com/jcraft/jzlib/InfBlocks.java
+END
+Adler32.java
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svn/!svn/ver/2/trunk/src/com/jcraft/jzlib/Adler32.java
+END
+InfTree.java
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svn/!svn/ver/2/trunk/src/com/jcraft/jzlib/InfTree.java
+END

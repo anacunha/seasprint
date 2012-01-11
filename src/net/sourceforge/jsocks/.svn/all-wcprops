@@ -1,0 +1,95 @@
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/svn/!svn/ver/2/trunk/src/net/sourceforge/jsocks
+END
+AuthenticationNone.java
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/!svn/ver/2/trunk/src/net/sourceforge/jsocks/AuthenticationNone.java
+END
+SocksException.java
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/!svn/ver/2/trunk/src/net/sourceforge/jsocks/SocksException.java
+END
+Socks4Proxy.java
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/!svn/ver/2/trunk/src/net/sourceforge/jsocks/Socks4Proxy.java
+END
+ProxyServer.java
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/!svn/ver/2/trunk/src/net/sourceforge/jsocks/ProxyServer.java
+END
+Socks5Proxy.java
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/!svn/ver/2/trunk/src/net/sourceforge/jsocks/Socks5Proxy.java
+END
+Socks4Message.java
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svn/!svn/ver/2/trunk/src/net/sourceforge/jsocks/Socks4Message.java
+END
+Socks5Message.java
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svn/!svn/ver/2/trunk/src/net/sourceforge/jsocks/Socks5Message.java
+END
+UDPRelayServer.java
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/!svn/ver/2/trunk/src/net/sourceforge/jsocks/UDPRelayServer.java
+END
+UDPEncapsulation.java
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/!svn/ver/2/trunk/src/net/sourceforge/jsocks/UDPEncapsulation.java
+END
+Authentication.java
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/!svn/ver/2/trunk/src/net/sourceforge/jsocks/Authentication.java
+END
+Proxy.java
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/!svn/ver/2/trunk/src/net/sourceforge/jsocks/Proxy.java
+END
+Socks5DatagramSocket.java
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svn/!svn/ver/2/trunk/src/net/sourceforge/jsocks/Socks5DatagramSocket.java
+END
+SocksServerSocket.java
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/!svn/ver/2/trunk/src/net/sourceforge/jsocks/SocksServerSocket.java
+END
+ProxyMessage.java
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svn/!svn/ver/2/trunk/src/net/sourceforge/jsocks/ProxyMessage.java
+END
+SocksSocket.java
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/!svn/ver/2/trunk/src/net/sourceforge/jsocks/SocksSocket.java
+END

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="hello">Hello World, EngineeringPrinter!</string>
+    <string name="app_name">Print To Engineering</string>
+    <string name="printer_prompt">Please select a printer</string>
+    <string name="duplex_prompt">Duplex printing</string>
+    <string name="number_prompt">Please select the number of copies</string>
+    <string name="pps_prompt">Please select the number of pages per sheet</string>
+        <string-array name="planets_array">
+        <item>Printer 1</item>
+        <item>Printer 2</item>
+        <item>Printer 3</item>
+        <item>Printer 4</item>
+        <item>Printer 5</item>
+    </string-array>
+<string name="connection_menuitem">Connection</string>
+</resources>
