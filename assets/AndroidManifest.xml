@@ -184,135 +184,27 @@
                     android:scheme="content" >
                 </data>
             </intent-filter>
-            
-                        <intent-filter>
-                <action android:name="android.intent.action.VIEW" >
-                </action>
-
-                <category android:name="android.intent.category.DEFAULT" >
-                </category>
-                <category android:name="android.intent.category.BROWSABLE" >
-                </category>
-
-                <data
-                    android:mimeType="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                    android:scheme="file" >
-                </data>
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" >
-                </action>
-
-                <category android:name="android.intent.category.DEFAULT" >
-                </category>
-                <category android:name="android.intent.category.BROWSABLE" >
-                </category>
-
-                <data
-                    android:mimeType="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                    android:scheme="content" >
-                </data>
-            </intent-filter>
-                        <intent-filter>
-                <action android:name="android.intent.action.VIEW" >
-                </action>
-
-                <category android:name="android.intent.category.DEFAULT" >
-                </category>
-                <category android:name="android.intent.category.BROWSABLE" >
-                </category>
-
-                <data
-                    android:mimeType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                    android:scheme="file" >
-                </data>
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" >
-                </action>
-
-                <category android:name="android.intent.category.DEFAULT" >
-                </category>
-                <category android:name="android.intent.category.BROWSABLE" >
-                </category>
-
-                <data
-                    android:mimeType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                    android:scheme="content" >
-                </data>
-            </intent-filter>
-                        <intent-filter>
-                <action android:name="android.intent.action.VIEW" >
-                </action>
-
-                <category android:name="android.intent.category.DEFAULT" >
-                </category>
-                <category android:name="android.intent.category.BROWSABLE" >
-                </category>
-
-                <data
-                    android:mimeType="application/vnd.openxmlformats-officedocument.presentationml.slideshow"
-                    android:scheme="file" >
-                </data>
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" >
-                </action>
-
-                <category android:name="android.intent.category.DEFAULT" >
-                </category>
-                <category android:name="android.intent.category.BROWSABLE" >
-                </category>
-
-                <data
-                    android:mimeType="application/vnd.openxmlformats-officedocument.presentationml.slideshow"
-                    android:scheme="content" >
-                </data>
-            </intent-filter>
-                        <intent-filter>
-                <action android:name="android.intent.action.VIEW" >
-                </action>
-
-                <category android:name="android.intent.category.DEFAULT" >
-                </category>
-                <category android:name="android.intent.category.BROWSABLE" >
-                </category>
-
-                <data
-                    android:mimeType="application/vnd.openxmlformats-officedocument.presentationml.presentation"
-                    android:scheme="file" >
-                </data>
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" >
-                </action>
-
-                <category android:name="android.intent.category.DEFAULT" >
-                </category>
-                <category android:name="android.intent.category.BROWSABLE" >
-                </category>
-
-                <data
-                    android:mimeType="application/vnd.openxmlformats-officedocument.presentationml.presentation"
-                    android:scheme="content" >
-                </data>
-            </intent-filter>
         </activity>
-        <activity android:name=".LoginScreen" />
-        <activity android:name=".LoadingStatusScreen" />
-        <activity android:name=".LocalFileBrowser" />
-        <activity android:name=".RemoteFileBrowser" />
-        <activity android:name=".SourceSelectScreen" >
+        
+        <activity android:name=".EngineeringPrinter" >
+        </activity>
+        
+        <activity android:name=".LoadingStatusScreen" >
+        </activity>
+        
+        <activity android:name=".FileSource" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        
         <activity
             android:name="io.filepicker.FilePicker"
             android:label="@string/title_activity_file_picker" >
         </activity>
+        
         <activity
             android:name="io.filepicker.AuthActivity"
             android:label="@string/title_activity_file_picker_auth" >

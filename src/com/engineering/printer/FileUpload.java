@@ -1,11 +1,9 @@
 package com.engineering.printer;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import android.app.AlertDialog;
 import android.util.Log;
 
 import com.trilead.ssh2.Connection;
@@ -83,14 +81,18 @@ public class FileUpload implements Runnable {
     public void run() {
         try {
             String home = mConn.execWithReturn("echo ~");
-            String tmpfile = mConn.execWithReturn("echo `mktemp " + home  + "/tmp.XXXXXXXX`");
+            String tmpfile = mConn.execWithReturn("echo `mktemp " + home  + "/SEASPRINT_XXXXXXXX`");
             //String tmpfile = "/home1/j/jmccaf/tmpprint.pdf"; 
             String [] toks = tmpfile.split("/");
+            /*
             String rebuild = "";
+            
             for (int i = 0 ; i < toks.length - 1;i++) {
-                rebuild = rebuild + "/" + toks[i];
+                //rebuild = rebuild + "/" + toks[i];
+            	rebuild = rebuild + toks[i] + "/";
             }
-            String remoteTargetDirectory = rebuild;
+            String remoteTargetDirectory = rebuild;*/
+            String remoteTargetDirectory = home;
             String remoteFileName = toks[toks.length - 1];
     
             Log.i("Connection", tmpfile);

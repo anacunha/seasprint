@@ -34,6 +34,7 @@ import android.content.Context;
 import android.os.Handler;
 import android.text.InputType;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -54,8 +55,12 @@ public class NumberPicker extends LinearLayout {
 
 	private final long REPEAT_DELAY = 50;
 	
-	private final int ELEMENT_HEIGHT = 50;
+	private final int TEXT_SIZE=15; //in sp
+	private final int ELEMENT_HEIGHT = 40; //in dp
 	private final int ELEMENT_WIDTH = ELEMENT_HEIGHT; // you're all squares, yo
+	
+	private int elemHeightPixels;
+	private int elemWidthPixels;
 	
 	private final int MINIMUM = 1;
 	private final int MAXIMUM = 999;
@@ -95,7 +100,13 @@ public class NumberPicker extends LinearLayout {
 		super(context, attributeSet);
 		
 		this.setLayoutParams( new LinearLayout.LayoutParams( LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT ) );
-		LayoutParams elementParams = new LinearLayout.LayoutParams( ELEMENT_HEIGHT, ELEMENT_WIDTH );
+		
+		DisplayMetrics dm = getContext().getResources().getDisplayMetrics();
+		final float scale = dm.density;
+		elemHeightPixels = (int) (ELEMENT_HEIGHT * scale + 0.5f);
+		elemWidthPixels = (int) (ELEMENT_WIDTH * scale + 0.5f);
+		
+		LayoutParams elementParams = new LinearLayout.LayoutParams( elemHeightPixels, elemWidthPixels );
 		
 		// init the individual elements
 		initDecrementButton( context );
@@ -117,7 +128,7 @@ public class NumberPicker extends LinearLayout {
 	
 	private void initIncrementButton( Context context){
 		increment = new Button( context );
-		increment.setTextSize( 25 );
+		increment.setTextSize( TEXT_SIZE );
 		increment.setText( "+" );
 		
 		// Increment once for a click
@@ -151,10 +162,10 @@ public class NumberPicker extends LinearLayout {
 	
 	private void initValueEditText( Context context){
 		
-		value = new Integer( 1 );
+		value = Integer.valueOf(1);
 		
 		valueText = new EditText( context );
-		valueText.setTextSize(25);
+		valueText.setTextSize(TEXT_SIZE);
 		
 		// Since we're a number that gets affected by the button, we need to be
 		// ready to change the numeric value with a simple ++/--, so whenever
@@ -192,7 +203,7 @@ public class NumberPicker extends LinearLayout {
 	
 	private void initDecrementButton( Context context){
 		decrement = new Button( context );
-		decrement.setTextSize( 25 );
+		decrement.setTextSize( TEXT_SIZE );
 		decrement.setText( "-" );
 		
 

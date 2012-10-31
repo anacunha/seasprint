@@ -2,7 +2,6 @@ package com.engineering.printer;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Intent;
 import android.os.Handler;
 
 public class ErrorCallback {
@@ -24,8 +23,6 @@ public class ErrorCallback {
             }
         };
         mHand.post( r);
-        //Intent myIntent = new Intent(mAct, EngineeringPrinter.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        //mAct.startActivityForResult(myIntent, 0);
     }
     
 }

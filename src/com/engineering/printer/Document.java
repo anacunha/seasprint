@@ -1,34 +1,191 @@
 package com.engineering.printer;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
+import java.net.URLConnection;
 
+import android.content.Context;
 import android.net.Uri;
-import android.util.Log;
-
+/**
+ * Document that is pending to be printed
+ */
 public class Document {
-    public static byte [] data;
-    public static String descriptor;
-    
-    public static void load(InputStream datain) {
-        try {
-            int count = datain.available();
-            data = new byte[count];
-            datain.read(data,0,count);
-        }
-        catch (IOException ioe) {
-            Log.e("Connection",ioe.toString());
-        }
+    private byte [] mData;
+    private String mDisplayName = "N/A";
+    private String mType = "N/A";
+    private String mExt = "";
+    /*
+     * Mime type of microsoft office documents
+     */
+	private final static String [] msDocsMimeType = {
+			"application/vnd.ms-powerpoint",
+			"application/vnd.ms-excel",
+			"application/msword",
+			"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+			"application/vnd.openxmlformats-officedocument.presentationml.slideshow",
+			"application/vnd.openxmlformats-officedocument.presentationml.presentation",
+			"application/vnd.openxmlformats-officedocument.wordprocessingml.document"};
+
+	/**
+	 * mime type prefix of other supported documents
+	 */
+	private final static String [] otherDocsMimeType = {
+		"text/",
+		"image/",
+		"application/pdf"	
+		};
+	
+	/**
+	 * extension of microsoft office documents
+	 */
+	private final static String[] msDocsExt = { "ppt", "pps", "xls", "doc",
+		"docx", "xlsx", "pptx", "ppsx" };
+
+	/**
+	 * Other extensions of supported documents
+	 */
+	private final static String[] otherDocsExt = { "bmp", "gif", "jpg", "png",
+			"txt", "rtf", "pdf" };
+
+	/**
+	 * Load a uri resource to mData. 
+	 * Set the display name to the base name if it's a file. Otherwise, set the display
+	 * name as the uri. 
+	 * @param context
+	 * @param uri
+	 * @throws IOException
+	 */
+	private void load(Context context, Uri uri) throws IOException {
+		InputStream datain = context.getContentResolver().openInputStream(uri);
+		int count = datain.available();
+		mData = new byte[count];
+		datain.read(mData, 0, count);
+
+		String uriStr = uri.toString();
+		if (uriStr.substring(0, 4).equals("file"))
+			setDisplayName(uriStr.substring(uriStr.lastIndexOf("/")+1,
+					uriStr.length()));
+		else {
+			setDisplayName(uriStr);
+		}
+		
+		mExt = uriStr.substring(uriStr.lastIndexOf(".")+1,uriStr.length());
+	}
+	
+	/**
+	 * Load a resource. Because mime type is not given, this method will also try to 
+	 * guess the type based on file name and its content. If all attempts fail,
+	 * mime type will be left as null.
+	 * Set the display name to the base name if it's a file. Otherwise, set the display
+	 * name as the uri.
+	 * @param context
+	 * @param uri
+	 * @throws IOException
+	 */
+    public Document(Context context, Uri uri) throws IOException
+    {
+    	load(context, uri);
+    	
+    	String typeFromName = URLConnection.guessContentTypeFromName(uri.toString()); 
+    	if(typeFromName != null)
+    		setMimeType(typeFromName);
+    	else
+    	{
+    		ByteArrayInputStream is = new ByteArrayInputStream(mData);
+        	String typeFromStream = URLConnection.guessContentTypeFromStream(is);
+        	if(typeFromStream != null)
+        		setMimeType(typeFromStream);
+    	}
+    }
+
+    /**
+     * Load a document and set the mime type as specified.
+     * Set the display name to the base name if it's a file. Otherwise, set the display
+	 * name as the uri.
+     * @param context
+     * @param uri
+     * @param mimeType
+     * @throws IOException
+     */
+    public Document(Context context, Uri uri, String mimeType) throws IOException
+    {
+    	load(context, uri);
+        setMimeType(mimeType);
+	}   
+
+
+    public void setMimeType(String mimeType)
+    {
+    	mType = mimeType;
     }
     
-    public static void setDescriptor(Uri uri) {
-        String intentData=uri.toString();
-        String fileName;
-        if(intentData.substring(0, 4).equals("file"))
-            descriptor=intentData.substring(intentData.lastIndexOf("/"), intentData.length());
-        else
-            descriptor="content";
-        Log.i("Connection", descriptor);
+    public String getMimeType()
+    {
+    	return mType;
     }
+    
+    /**
+     * Is this document a microsoft office document?
+     * Determined based on mime type and file name extension.
+     * @return
+     */
+    public boolean IsMicrosoft() {
+    	for(String s : msDocsMimeType)
+    	{
+    		if (mType.equals(s))
+    			return true;
+    	}
+		for(String s : msDocsExt)
+    	{
+    		if (mExt.equalsIgnoreCase(s))
+    			return true;
+    	}
+        return false;
+    }
+    
+    /**
+     * Is this document supported?
+     * Determined based on mime type and file name extension.
+     * @return
+     */
+    public boolean IsSupported()
+    {
+		for(String s : otherDocsMimeType)
+    	{
+    		if (mType.startsWith(s))
+    			return true;
+    	}
+		for(String s : otherDocsExt)
+    	{
+    		if (mExt.equalsIgnoreCase(s))
+    			return true;
+    	}
+		return IsMicrosoft();
+    }
+
+    /**
+     * Set the display name of the document.
+     * @param displayName
+     */
+    public void setDisplayName(String displayName) {
+    	mDisplayName = displayName;
+    }
+    
+    /**
+     * get the display name.
+     * @return
+     */
+    public String getDisplayName(){
+    	return mDisplayName;
+    }
+    
+    /**
+     * Read the data of this document.
+     * @return
+     */
+    public byte[] getData(){
+    	return mData;
+    }
+    
 }

@@ -1,27 +1,25 @@
 package com.engineering.printer;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import com.trilead.ssh2.Connection;
-
 import android.app.Activity;
-import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.text.Editable;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnCreateContextMenuListener;
-import android.widget.Adapter;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
@@ -31,202 +29,256 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
-public class PrinterSelectScreen extends Activity{
-	
-	public static String printer;
+public class PrinterSelectScreen extends Activity {
+	static final String PRINTER_PREF = "SEASPrintingFavorite";
+	static final String PRINTER_KEY = "printerpreference";
+	static String mFavored;
 
-	public static boolean duplex;
+	String printer;
+	boolean duplex;
 	boolean dTemp;
-	public static Integer number;
-	public static final String PRINTER_PREF = "SEASPrintingFavorite";
-	public static final String PRINTER_KEY = "printerpreference";
-	public static String mFavored;
+	Integer number;
+	Document mDocument;
+
 	private ToggleButton mTogglebutton;
 	private Spinner mSpinner;
 	private Button mPrintbutton;
 	private NumberPicker mNumberPicker;
 	private ArrayAdapter<CharSequence> mAdapter;
-	
-	//public static Integer pps;
-	
+
+	private final int REQUEST_LOGIN = 1;
+
+	// public static Integer pps;
+
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater infl = new MenuInflater(this);
 		infl.inflate(R.menu.menu, menu);
 		return super.onCreateOptionsMenu(menu);
 	}
-	
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		// TODO Auto-generated method stub
 		if (item.getItemId() == R.id.connection_config) {
-       	 Intent myIntent = new Intent(this, EngineeringPrinter.class);
-         startActivityForResult(myIntent, 0);
-		return true;
+			Intent myIntent = new Intent(this, LoginScreen.class);
+			startActivityForResult(myIntent, REQUEST_LOGIN);
+			return true;
 		}
 		return super.onOptionsItemSelected(item);
-		
+
 	}
-	
-	 public void onCreate(Bundle savedInstanceState) {
-	        super.onCreate(savedInstanceState);
-	        
-	        InputStream is = null;
-	        try {
-	        	if (null != getIntent().getData()) {
-		            is = getContentResolver().openInputStream(getIntent().getData());
-			        Document.load(is);
-			        Document.setDescriptor(getIntent().getData());
-			          EngineeringPrinter.Microsoft = MicrosoftSink.Filter(getIntent().getType());
-			          EngineeringPrinter.type = getIntent().getType();
 
-	        	}
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
 
-	        }
-	        catch  (FileNotFoundException fnf){
-	            Log.e("Connection","File Not Found");
-	        }
+		this.setTitle("Ready to Print");
 
-	        
-	       SharedPreferences settings = getSharedPreferences(PRINTER_PREF, 0);
-	       mFavored = settings.getString(PRINTER_KEY, null);
-	       if (mFavored == null) {
-	           mFavored = "169";
-	       }
-	       
-	       SharedPreferences conn_set = getSharedPreferences(EngineeringPrinter.PREFS_NAME, MODE_PRIVATE);
-	        if (conn_set.contains(EngineeringPrinter.PASSWORD_KEY)) {
-	        	if (conn_set.contains(EngineeringPrinter.KEY_KEY) &&
-	 	    		conn_set.contains(EngineeringPrinter.HOST_KEY) &&
-		    		conn_set.contains(EngineeringPrinter.PORT_KEY)) {
-	        			String key = (new AuthSetup(conn_set.getString(EngineeringPrinter.USER_KEY, ""),
-	    			   conn_set.getString(EngineeringPrinter.PASSWORD_KEY, ""), 
-	    			   conn_set.getString(EngineeringPrinter.HOST_KEY, ""), 
-	    			   Integer.valueOf(conn_set.getString(EngineeringPrinter.PORT_KEY,EngineeringPrinter.PORT_FAIL)))).keyGen();
-	        			conn_set.edit().putString(EngineeringPrinter.KEY_KEY, key).commit();
-	        	}
-	        	conn_set.edit().remove(EngineeringPrinter.PASSWORD_KEY).commit();
-	        }
-	       if (!conn_set.contains(EngineeringPrinter.USER_KEY) ||
-	    		   !conn_set.contains(EngineeringPrinter.KEY_KEY) || 
-	    		   !conn_set.contains(EngineeringPrinter.HOST_KEY) ||
-	    		   !conn_set.contains(EngineeringPrinter.PORT_KEY)){
-	         	 Intent myIntent = new Intent(this, EngineeringPrinter.class);
-	             startActivityForResult(myIntent, 0);
-	       }
-	       else {
-	    	   try {
-	    	   EngineeringPrinter.connect = (new ConnectionFactory()).MakeConnectionKey(
-	    			   conn_set.getString(EngineeringPrinter.USER_KEY, ""),
-	    			   conn_set.getString(EngineeringPrinter.KEY_KEY, ""), 
-	    			   conn_set.getString(EngineeringPrinter.HOST_KEY, ""), 
-	    			   Integer.valueOf(conn_set.getString(EngineeringPrinter.PORT_KEY,EngineeringPrinter.PORT_FAIL)));
-	    	   }
-	    	   catch (IOException e) {
-		         	 Intent myIntent = new Intent(this, EngineeringPrinter.class);
-		             startActivityForResult(myIntent, 0);
-	    	   }
-	       }
-	 }
-	 
-	 public void onStop() {
-	     super.onStop();
+		setContentView(R.layout.printers);
 
-	 }
-	 
-	 public void onResume()
-	 {
-		 super.onResume();
-		 setContentView(R.layout.printers);
-		 
-		 
-	        
-		   mSpinner = (Spinner) findViewById(R.id.printer_spinner);
-	        String printers[] = null;
-	        boolean has_favored = false;
-	        try {
-	            //InputStream is = getContentResolver().openInputStream(getIntent().getData());
-	        	Log.d("Connection", "Start Connecting");
-	            PrintCaller pc = new PrintCaller(new CommandConnection(EngineeringPrinter.connect));
-	            List<String> ps = pc.getPrinters();
-	            printers = new String[ps.size()];
-	            // yes I know this is stupid and could be done much easier but ps.toArray was trippin ballz
-	            int i = 0;
-	            for(Iterator<String> iter = ps.iterator(); iter.hasNext(); i++) {
-	            	printers[i] = iter.next();
-	            }
-	            has_favored = ps.contains(mFavored);
-	        }
-	        catch (IOException ioe){
-	            new AlertDialog.Builder(getApplicationContext()).setMessage("Could not connect to server! Verify login information and network status.").create().show();
-	            Log.d("Connection", "Failed to connect or send");
-	        }
-	        mAdapter = new ArrayAdapter(
-	                this, android.R.layout.simple_spinner_item, printers);
-	        mAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-	        mSpinner.setAdapter(mAdapter);
-	           if (has_favored) {
-	                int pos = mAdapter.getPosition(mFavored);
-	                mSpinner.setSelection(pos);
-	            }
-	        mSpinner.setOnItemSelectedListener(new MyOnItemSelectedListener());
-	        
-	        mTogglebutton = (ToggleButton) findViewById(R.id.duplex_togglebutton);
-	        mTogglebutton.setOnClickListener(new OnClickListener() {
-	            public void onClick(View v) {
-	                // Perform action on clicks
-	                if (mTogglebutton.isChecked()) {
-	                    dTemp=true;
-	                } else {
-	                    dTemp=false;
-	                }
-	            }
-	        });
-	        
-	        mNumberPicker= (NumberPicker) findViewById(R.id.number_picker);
-	        TextView t1 = (TextView) findViewById(R.id.duplex_label);
-	        TextView t2 = (TextView) findViewById(R.id.number_label);
-	        
-	        //final NumberPicker ppspicker= (NumberPicker) findViewById(R.id.pps_picker);
-	        
-	        if (EngineeringPrinter.Microsoft) {
-	            t1.setVisibility(View.GONE);
-	            t2.setVisibility(View.GONE);
-	            mNumberPicker.setVisibility(View.GONE);
-	            mTogglebutton.setVisibility(View.GONE);
-	        }
-	        
-	        mPrintbutton = (Button) findViewById(R.id.print_button);
-	        mPrintbutton.setOnClickListener(new View.OnClickListener() {
-	             public void onClick(View v) {
-	            	 number=mNumberPicker.value;
-	            	// pps=ppspicker.value;
-	            	 duplex=dTemp;
-	            	 
-	                 SharedPreferences settings = getSharedPreferences(PRINTER_PREF, 0);
-	                 SharedPreferences.Editor ed = settings.edit();
-	                 ed.putString(PRINTER_KEY, mFavored);
-	            	 
-	            	 //PRINT
-	            	 Intent myIntent = new Intent(v.getContext(), LoadingStatusScreen.class);
-                  startActivityForResult(myIntent, 0);
-	             }
-	         });
-		 
-	 }
-	 
-	 
-	 public static class MyOnItemSelectedListener implements OnItemSelectedListener {
-		 public static String printer;
-		 	
-		    public void onItemSelected(AdapterView<?> parent,
-		        View view, int pos, long id) {
-		    	//PRINTER WAS SELECTED
-		    	printer=parent.getItemAtPosition(pos).toString();
-		    	mFavored = printer;
-		    }
-
-		    public void onNothingSelected(AdapterView parent) {
-		      // Do nothing.
-		    }
+		SharedPreferences settings = getSharedPreferences(PRINTER_PREF, 0);
+		mFavored = settings.getString(PRINTER_KEY, null);
+		if (mFavored == null) {
+			mFavored = "169";
 		}
+
+		mTogglebutton = (ToggleButton) findViewById(R.id.duplex_togglebutton);
+		mTogglebutton.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				// Perform action on clicks
+				if (mTogglebutton.isChecked()) {
+					dTemp = true;
+				} else {
+					dTemp = false;
+				}
+			}
+		});
+
+		mNumberPicker = (NumberPicker) findViewById(R.id.number_picker);
+		// TextView t1 = (TextView) findViewById(R.id.duplex_label);
+		// TextView t2 = (TextView) findViewById(R.id.number_label);
+
+		// if (Document.isMicrosoft) {
+		// t1.setVisibility(View.GONE);
+		// t2.setVisibility(View.GONE);
+		// mNumberPicker.setVisibility(View.GONE);
+		// mTogglebutton.setVisibility(View.GONE);
+		// }
+
+		mPrintbutton = (Button) findViewById(R.id.print_button);
+		mPrintbutton.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				number = mNumberPicker.value;
+				duplex = dTemp;
+
+				SharedPreferences settings = getSharedPreferences(PRINTER_PREF,
+						0);
+				SharedPreferences.Editor ed = settings.edit();
+				ed.putString(PRINTER_KEY, mFavored);
+				ed.commit();
+
+				// PRINT
+				PrintJobInfo job = new PrintJobInfo();
+				job.doc = mDocument;
+				job.duplex = dTemp;
+				job.numCopies = mNumberPicker.value;
+				job.printer = mFavored;
+				new UploadFileTask(PrinterSelectScreen.this).execute(job);
+			}
+		});
+
+	}
+
+	@Override
+	public void onStart() {
+		super.onStart();
+		try {
+			if (null != getIntent().getData()) {
+				if (null != getIntent().getType())
+					mDocument = new Document(this, getIntent().getData(),
+							getIntent().getType());
+				else
+					mDocument = new Document(this, getIntent().getData());
+				if (mDocument.getMimeType() != null) {
+					if (!mDocument.IsSupported()) {
+						Toast.makeText(PrinterSelectScreen.this,
+								"File format is not supported.",
+								Toast.LENGTH_LONG).show();
+						this.finish();
+						return;
+					}
+				} else {
+					Toast.makeText(PrinterSelectScreen.this,
+							"File format not recognized, proceed anyway.",
+							Toast.LENGTH_LONG).show();
+				}
+			}
+			else
+			{
+				Toast.makeText(this, "Cannot read file.",
+						Toast.LENGTH_LONG).show();
+				this.finish();
+				return;
+			}
+		} catch (IOException e) {
+			Log.e("Connection", "File Not Found");
+			Toast.makeText(PrinterSelectScreen.this, "Cannot open file.",
+					Toast.LENGTH_LONG).show();
+			this.finish();
+			return;
+		}
+
+		final TextView tvFileName = (TextView) findViewById(R.id.tvFilename);
+		tvFileName.setText(mDocument.getDisplayName());
+
+		if (LoginScreen.getConnection() == null) {
+			Intent myIntent = new Intent(this, LoginScreen.class);
+			startActivityForResult(myIntent, REQUEST_LOGIN);
+		} else {
+			new EnumeratePrinters().execute((Void) null);
+		}
+		
+		
+
+	}
+
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (requestCode == REQUEST_LOGIN) {
+			if (resultCode == RESULT_OK) {
+				new EnumeratePrinters().execute((Void) null);
+			} else
+				this.finish();
+		} else
+			this.finish();
+
+		super.onActivityResult(requestCode, resultCode, data);
+	}
+
+	public static class MyOnItemSelectedListener implements
+			OnItemSelectedListener {
+		public static String printer;
+
+		public void onItemSelected(AdapterView<?> parent, View view, int pos,
+				long id) {
+			// PRINTER WAS SELECTED
+			printer = parent.getItemAtPosition(pos).toString();
+			mFavored = printer;
+		}
+
+		public void onNothingSelected(AdapterView<?> parent) {
+			// Do nothing.
+		}
+	}
+
+	private class EnumeratePrinters extends AsyncTask<Void, Void, Boolean> {
+		private ProgressDialog pd;
+		private List<String> ps;
+
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+			pd = new ProgressDialog(PrinterSelectScreen.this);
+			pd.setMessage("Listing available printers...");
+			pd.setIndeterminate(true);
+			pd.setCancelable(true);
+			pd.setOnCancelListener(new DialogInterface.OnCancelListener() {
+				public void onCancel(DialogInterface dialog) {
+					EnumeratePrinters.this.cancel(true);
+					PrinterSelectScreen.this.finish();
+				}
+			});
+			pd.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+			pd.show();
+		}
+
+		@Override
+		protected void onPostExecute(Boolean result) {
+			super.onPostExecute(result);
+
+			if (result.equals(false)) {
+				Toast.makeText(
+						PrinterSelectScreen.this,
+						"Could not connect to server! Verify login information and network status.",
+						Toast.LENGTH_LONG).show();
+				PrinterSelectScreen.this.finish();
+				return;
+			} else {
+				boolean has_favored = false;
+				mAdapter = new ArrayAdapter<CharSequence>(
+						getApplicationContext(), R.layout.spinner_item,
+						new ArrayList<CharSequence>());
+				mAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+				for (Iterator<String> iter = ps.iterator(); iter.hasNext();) {
+					mAdapter.add(iter.next());
+				}
+				mSpinner = (Spinner) findViewById(R.id.printer_spinner);
+				mSpinner.setAdapter(mAdapter);
+				mSpinner.setOnItemSelectedListener(new MyOnItemSelectedListener());
+
+				has_favored = ps.contains(mFavored);
+				if (has_favored) {
+					int pos = mAdapter.getPosition(mFavored);
+					mSpinner.setSelection(pos);
+				}
+
+				pd.dismiss();
+			}
+
+		}
+
+		@Override
+		protected Boolean doInBackground(Void... params) {
+			try {
+				Log.d("Connection", "Start Connecting");
+				PrintCaller pc = new PrintCaller(new CommandConnection(
+						LoginScreen.getConnection()));
+				ps = pc.getPrinters();
+			} catch (IOException ioe) {
+				LoginScreen.resetConnection();
+				Log.d("Connection", "Failed to connect or send");
+				return false;
+			}
+			return true;
+
+		}
+	}
+
 }

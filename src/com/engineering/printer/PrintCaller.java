@@ -5,6 +5,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import android.util.Log;
+
 public class PrintCaller {
     
     private CommandConnection mConn;
@@ -25,7 +27,6 @@ public class PrintCaller {
 		try {
 			out = runCommand("lpstat -a");
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		StringTokenizer st = new StringTokenizer(out, "\n");
@@ -48,12 +49,18 @@ public class PrintCaller {
 		return printers;
 	}
 	
-	public void printFile(String fileName, String printerName, int numCopies, boolean duplex) throws IOException {
-	    if (EngineeringPrinter.Microsoft) {
-    	    runCommand("ooffice -norestore -nofirststartwizard -nologo -headless -pt " + printerName + " " + fileName);
+	public void printFile(String fileName, boolean isMicrosoft, String printerName, int numCopies, boolean duplex) throws IOException {
+		//Print document
+	    if (isMicrosoft) {
+    	    //runCommand("ooffice -norestore -nofirststartwizard -nologo -headless -pt " + printerName + " " + fileName);
+	    	runCommand("ooffice --norestore --nofirststartwizard --nologo --headless --print-to-file --outdir ~ \"" + fileName + "\"");
+	    	Log.d("Print", "lpr -P" + printerName + " -# " + numCopies + (duplex ? " -o sides=two-sided-long-edge" : "") + " \"" + fileName + ".ps\"");
+    	    runCommand("lpr -P" + printerName + " -# " + numCopies + (duplex ? " -o sides=two-sided-long-edge" : "") + " \"" + fileName + ".ps\"");
+    	    runCommand("rm \"" + fileName + ".ps\"");
     	}
     	else {
-    	       runCommand("lpr -P" + printerName + " -# " + numCopies + (duplex ? " -o sides=two-sided-long-edge" : "") + " " + fileName);      
+    		Log.d("Print", "lpr -P" + printerName + " -# " + numCopies + (duplex ? " -o sides=two-sided-long-edge" : "") + " \"" + fileName + "\"");
+    	    runCommand("lpr -P" + printerName + " -# " + numCopies + (duplex ? " -o sides=two-sided-long-edge" : "") + " \"" + fileName + "\"");
     	}
 	}
 	

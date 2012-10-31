@@ -14,7 +14,7 @@ public class CommandConnection {
     
     private Connection mConn;
     
-    public CommandConnection(Connection c) throws IOException{
+    public CommandConnection(Connection c){
        mConn = c;
     }
     
@@ -30,8 +30,6 @@ public class CommandConnection {
             sb.append("\n");
         }
         
-        InputStream es = sess.getStderr();
-        BufferedReader er = new BufferedReader(new InputStreamReader(es));
         StringBuilder eb = new StringBuilder();
         String estr =null;
         while ((estr = rd.readLine()) != null) {
