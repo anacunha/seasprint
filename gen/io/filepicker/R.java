@@ -18,9 +18,6 @@ public final class R {
         public static final int slide_out_left=0x7f040006;
         public static final int slide_out_right=0x7f040007;
     }
-    public static final class array {
-        public static final int planets_array=0x7f080000;
-    }
     public static final class attr {
     }
     public static final class dimen {
@@ -57,38 +54,38 @@ public final class R {
         public static final int tf3_icon=0x7f020019;
     }
     public static final class id {
-        public static final int button=0x7f0a0015;
-        public static final int button1=0x7f0a0007;
-        public static final int byte_progress=0x7f0a000f;
-        public static final int connection_config=0x7f0a001f;
-        public static final int duplex_label=0x7f0a001a;
-        public static final int duplex_togglebutton=0x7f0a001b;
-        public static final int editText1=0x7f0a0005;
-        public static final int gridView1=0x7f0a0001;
-        public static final int hostname=0x7f0a0012;
-        public static final int item_icon=0x7f0a0008;
-        public static final int item_text=0x7f0a0009;
-        public static final int linearLayout1=0x7f0a0004;
-        public static final int listView1=0x7f0a0000;
-        public static final int loading_constant=0x7f0a000d;
-        public static final int lvFileSource=0x7f0a001e;
-        public static final int lvFiles=0x7f0a000c;
-        public static final int number_label=0x7f0a0018;
-        public static final int number_picker=0x7f0a0019;
-        public static final int passtext=0x7f0a0011;
-        public static final int portname=0x7f0a0013;
-        public static final int print_button=0x7f0a001c;
-        public static final int printer_spinner=0x7f0a0017;
-        public static final int progressBar1=0x7f0a0002;
-        public static final int progress_bar=0x7f0a000e;
-        public static final int save=0x7f0a0014;
-        public static final int textView1=0x7f0a0006;
-        public static final int tvDesc=0x7f0a001d;
-        public static final int tvFilename=0x7f0a0016;
-        public static final int tvPath=0x7f0a000a;
-        public static final int usertext=0x7f0a0010;
-        public static final int view1=0x7f0a000b;
-        public static final int webView1=0x7f0a0003;
+        public static final int button=0x7f090015;
+        public static final int button1=0x7f090007;
+        public static final int byte_progress=0x7f09000f;
+        public static final int connection_config=0x7f09001f;
+        public static final int duplex_label=0x7f09001a;
+        public static final int duplex_togglebutton=0x7f09001b;
+        public static final int editText1=0x7f090005;
+        public static final int gridView1=0x7f090001;
+        public static final int hostname=0x7f090012;
+        public static final int item_icon=0x7f090008;
+        public static final int item_text=0x7f090009;
+        public static final int linearLayout1=0x7f090004;
+        public static final int listView1=0x7f090000;
+        public static final int loading_constant=0x7f09000d;
+        public static final int lvFileSource=0x7f09001e;
+        public static final int lvFiles=0x7f09000c;
+        public static final int number_label=0x7f090018;
+        public static final int number_picker=0x7f090019;
+        public static final int passtext=0x7f090011;
+        public static final int portname=0x7f090013;
+        public static final int print_button=0x7f09001c;
+        public static final int printer_spinner=0x7f090017;
+        public static final int progressBar1=0x7f090002;
+        public static final int progress_bar=0x7f09000e;
+        public static final int save=0x7f090014;
+        public static final int textView1=0x7f090006;
+        public static final int tvDesc=0x7f09001d;
+        public static final int tvFilename=0x7f090016;
+        public static final int tvPath=0x7f09000a;
+        public static final int usertext=0x7f090010;
+        public static final int view1=0x7f09000b;
+        public static final int webView1=0x7f090003;
     }
     public static final class layout {
         public static final int activity_file_picker=0x7f030000;
@@ -105,21 +102,27 @@ public final class R {
         public static final int spinner_item=0x7f03000b;
     }
     public static final class menu {
-        public static final int menu=0x7f090000;
+        public static final int menu=0x7f080000;
     }
     public static final class string {
         public static final int app_name=0x7f060000;
-        public static final int connection_menuitem=0x7f06000a;
-        public static final int duplex_prompt=0x7f060007;
+        public static final int connection_menuitem=0x7f060009;
+        public static final int duplex_prompt=0x7f060006;
         public static final int file_picker_animation_duration=0x7f060004;
-        public static final int filesource_prompt=0x7f06000d;
-        public static final int hello=0x7f060005;
+        public static final int filebrowser_label=0x7f060013;
+        public static final int filesource_prompt=0x7f06000c;
+        public static final int hostname_label=0x7f06000f;
+        public static final int login_btn_label=0x7f060012;
         public static final int menu_settings=0x7f060001;
-        public static final int number_prompt=0x7f060008;
-        public static final int pps_prompt=0x7f060009;
-        public static final int print=0x7f06000b;
-        public static final int print_job_prompt=0x7f06000c;
-        public static final int printer_prompt=0x7f060006;
+        public static final int number_prompt=0x7f060007;
+        public static final int pennkey_label=0x7f06000d;
+        public static final int pennpwd_label=0x7f06000e;
+        public static final int port_label=0x7f060010;
+        public static final int pps_prompt=0x7f060008;
+        public static final int print=0x7f06000a;
+        public static final int print_job_prompt=0x7f06000b;
+        public static final int printer_prompt=0x7f060005;
+        public static final int saveinfo_label=0x7f060011;
         public static final int title_activity_file_picker=0x7f060002;
         public static final int title_activity_file_picker_auth=0x7f060003;
     }

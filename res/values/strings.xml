@@ -1,20 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="hello">Hello World, EngineeringPrinter!</string>
     <string name="app_name">SEASPrint</string>
     <string name="printer_prompt">Please select a printer:</string>
     <string name="duplex_prompt">Duplex printing:</string>
     <string name="number_prompt">Number of copies:</string>
     <string name="pps_prompt">Please select the number of pages per sheet</string>
-        <string-array name="planets_array">
-        <item>Printer 1</item>
-        <item>Printer 2</item>
-        <item>Printer 3</item>
-        <item>Printer 4</item>
-        <item>Printer 5</item>
-    </string-array>
 <string name="connection_menuitem">Setup Connection</string>
-<string name="print">Print!</string>
+<string name="print">Print</string>
 <string name="print_job_prompt">Doc:</string>
 <string name="filesource_prompt">Send documents from various places directly to a printer in SEAS.</string>
+<string name="pennkey_label">PennKey</string>
+<string name="pennpwd_label">Password</string>
+<string name="hostname_label">Hostname</string>
+<string name="port_label">Port</string>
+<string name="saveinfo_label">Save my info</string>
+<string name="login_btn_label">Login</string>
+<string name="filebrowser_label">Browsing</string>
 </resources>
