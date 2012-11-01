@@ -13,7 +13,7 @@ import android.net.Uri;
 public class Document {
     private byte [] mData;
     private String mDisplayName = "N/A";
-    private String mType = "N/A";
+    private String mType = "";
     private String mExt = "";
     /*
      * Mime type of microsoft office documents
@@ -76,7 +76,7 @@ public class Document {
 	/**
 	 * Load a resource. Because mime type is not given, this method will also try to 
 	 * guess the type based on file name and its content. If all attempts fail,
-	 * mime type will be left as null.
+	 * mime type will be left as an empty string.
 	 * Set the display name to the base name if it's a file. Otherwise, set the display
 	 * name as the uri.
 	 * @param context
@@ -117,7 +117,8 @@ public class Document {
 
     public void setMimeType(String mimeType)
     {
-    	mType = mimeType;
+    	if(mimeType != null)
+    		mType = mimeType;
     }
     
     public String getMimeType()
@@ -169,7 +170,8 @@ public class Document {
      * @param displayName
      */
     public void setDisplayName(String displayName) {
-    	mDisplayName = displayName;
+    	if(displayName != null)
+    		mDisplayName = displayName;
     }
     
     /**

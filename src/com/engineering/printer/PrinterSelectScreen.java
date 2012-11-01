@@ -108,7 +108,7 @@ public class PrinterSelectScreen extends Activity {
 							getIntent().getType());
 				else
 					mDocument = new Document(this, getIntent().getData());
-				if (mDocument.getMimeType() != null) {
+				if (!mDocument.getMimeType().equals("")) {
 					if (!mDocument.IsSupported()) {
 						Toast.makeText(PrinterSelectScreen.this,
 								"File format is not supported.",
