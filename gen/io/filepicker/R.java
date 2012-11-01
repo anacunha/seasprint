@@ -58,8 +58,8 @@ public final class R {
         public static final int button1=0x7f090007;
         public static final int byte_progress=0x7f09000f;
         public static final int connection_config=0x7f09001f;
+        public static final int duplex_check=0x7f09001b;
         public static final int duplex_label=0x7f09001a;
-        public static final int duplex_togglebutton=0x7f09001b;
         public static final int editText1=0x7f090005;
         public static final int gridView1=0x7f090001;
         public static final int hostname=0x7f090012;

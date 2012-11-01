@@ -7,7 +7,6 @@ import java.util.List;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -18,29 +17,23 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Checkable;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
 public class PrinterSelectScreen extends Activity {
-	static final String PRINTER_PREF = "SEASPrintingFavorite";
-	static final String PRINTER_KEY = "printerpreference";
-	static String mFavored;
+	private static final String PRINTER_PREF = "SEASPrintingFavorite";
+	private static final String PRINTER_KEY = "printerpreference";
+	private String mFavoredPrinter;
 
-	String printer;
-	boolean duplex;
-	boolean dTemp;
-	Integer number;
-	Document mDocument;
+	private Document mDocument;
 
-	private ToggleButton mTogglebutton;
+	private Checkable mDuplexCheck;
 	private Spinner mSpinner;
 	private Button mPrintbutton;
 	private NumberPicker mNumberPicker;
@@ -75,52 +68,30 @@ public class PrinterSelectScreen extends Activity {
 		setContentView(R.layout.printers);
 
 		SharedPreferences settings = getSharedPreferences(PRINTER_PREF, 0);
-		mFavored = settings.getString(PRINTER_KEY, null);
-		if (mFavored == null) {
-			mFavored = "169";
+		mFavoredPrinter = settings.getString(PRINTER_KEY, null);
+		if (mFavoredPrinter == null) {
+			mFavoredPrinter = "169";
 		}
 
-		mTogglebutton = (ToggleButton) findViewById(R.id.duplex_togglebutton);
-		mTogglebutton.setOnClickListener(new OnClickListener() {
-			public void onClick(View v) {
-				// Perform action on clicks
-				if (mTogglebutton.isChecked()) {
-					dTemp = true;
-				} else {
-					dTemp = false;
-				}
-			}
-		});
+		mDuplexCheck = (Checkable) findViewById(R.id.duplex_check);
 
 		mNumberPicker = (NumberPicker) findViewById(R.id.number_picker);
-		// TextView t1 = (TextView) findViewById(R.id.duplex_label);
-		// TextView t2 = (TextView) findViewById(R.id.number_label);
-
-		// if (Document.isMicrosoft) {
-		// t1.setVisibility(View.GONE);
-		// t2.setVisibility(View.GONE);
-		// mNumberPicker.setVisibility(View.GONE);
-		// mTogglebutton.setVisibility(View.GONE);
-		// }
-
+		
 		mPrintbutton = (Button) findViewById(R.id.print_button);
 		mPrintbutton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				number = mNumberPicker.value;
-				duplex = dTemp;
-
 				SharedPreferences settings = getSharedPreferences(PRINTER_PREF,
 						0);
 				SharedPreferences.Editor ed = settings.edit();
-				ed.putString(PRINTER_KEY, mFavored);
+				ed.putString(PRINTER_KEY, mFavoredPrinter);
 				ed.commit();
 
 				// PRINT
 				PrintJobInfo job = new PrintJobInfo();
 				job.doc = mDocument;
-				job.duplex = dTemp;
+				job.duplex = mDuplexCheck.isChecked();
 				job.numCopies = mNumberPicker.value;
-				job.printer = mFavored;
+				job.printer = mFavoredPrinter;
 				new UploadFileTask(PrinterSelectScreen.this).execute(job);
 			}
 		});
@@ -173,7 +144,7 @@ public class PrinterSelectScreen extends Activity {
 			Intent myIntent = new Intent(this, LoginScreen.class);
 			startActivityForResult(myIntent, REQUEST_LOGIN);
 		} else {
-			new EnumeratePrinters().execute((Void) null);
+			new EnumeratePrintersTask().execute((Void) null);
 		}
 		
 		
@@ -183,7 +154,7 @@ public class PrinterSelectScreen extends Activity {
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == REQUEST_LOGIN) {
 			if (resultCode == RESULT_OK) {
-				new EnumeratePrinters().execute((Void) null);
+				new EnumeratePrintersTask().execute((Void) null);
 			} else
 				this.finish();
 		} else
@@ -192,15 +163,12 @@ public class PrinterSelectScreen extends Activity {
 		super.onActivityResult(requestCode, resultCode, data);
 	}
 
-	public static class MyOnItemSelectedListener implements
+	public class MyOnItemSelectedListener implements
 			OnItemSelectedListener {
-		public static String printer;
-
 		public void onItemSelected(AdapterView<?> parent, View view, int pos,
 				long id) {
 			// PRINTER WAS SELECTED
-			printer = parent.getItemAtPosition(pos).toString();
-			mFavored = printer;
+			mFavoredPrinter = parent.getItemAtPosition(pos).toString();
 		}
 
 		public void onNothingSelected(AdapterView<?> parent) {
@@ -208,7 +176,7 @@ public class PrinterSelectScreen extends Activity {
 		}
 	}
 
-	private class EnumeratePrinters extends AsyncTask<Void, Void, Boolean> {
+	private class EnumeratePrintersTask extends AsyncTask<Void, Void, Boolean> {
 		private ProgressDialog pd;
 		private List<String> ps;
 
@@ -221,7 +189,7 @@ public class PrinterSelectScreen extends Activity {
 			pd.setCancelable(true);
 			pd.setOnCancelListener(new DialogInterface.OnCancelListener() {
 				public void onCancel(DialogInterface dialog) {
-					EnumeratePrinters.this.cancel(true);
+					EnumeratePrintersTask.this.cancel(true);
 					PrinterSelectScreen.this.finish();
 				}
 			});
@@ -253,9 +221,9 @@ public class PrinterSelectScreen extends Activity {
 				mSpinner.setAdapter(mAdapter);
 				mSpinner.setOnItemSelectedListener(new MyOnItemSelectedListener());
 
-				has_favored = ps.contains(mFavored);
+				has_favored = ps.contains(mFavoredPrinter);
 				if (has_favored) {
-					int pos = mAdapter.getPosition(mFavored);
+					int pos = mAdapter.getPosition(mFavoredPrinter);
 					mSpinner.setSelection(pos);
 				}
 
