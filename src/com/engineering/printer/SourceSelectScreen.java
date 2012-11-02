@@ -15,6 +15,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Toast;
@@ -49,15 +50,17 @@ public class SourceSelectScreen extends Activity implements OnItemClickListener 
 		final ListView lvFileSource = (ListView) findViewById(R.id.lvFileSource);
 		lvFileSource.setOnItemClickListener(this);
 
-		List<ItemWithIcon> entries = new ArrayList<ItemWithIcon>();
 		//Feature lists
-		entries.add(new SimpleItemWithIcon("SD Card", R.drawable.sdcard_icon,
+		List<ItemWithIcon> primary_entries = new ArrayList<ItemWithIcon>();
+		primary_entries.add(new SimpleItemWithIcon("SD Card", R.drawable.sdcard_icon,
 				null));
-		entries.add(new SimpleItemWithIcon("Remote ENIAC Server",
+		primary_entries.add(new SimpleItemWithIcon("Remote ENIAC Server",
 				R.drawable.eniac_icon, null));
-		entries.add(new SimpleItemWithIcon("Other Cloud Services",
+		primary_entries.add(new SimpleItemWithIcon("Other Cloud Services",
 				R.drawable.filepicker_icon, null));
+		
 		//List third party file browser
+		List<ItemWithIcon> thirdparty_entries = new ArrayList<ItemWithIcon>();
 		Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
 		intent.setType("file/*");
 		List<ResolveInfo> resInfo = getPackageManager().queryIntentActivities(
@@ -68,18 +71,29 @@ public class SourceSelectScreen extends Activity implements OnItemClickListener 
 			if (aInfo != null) {
 				ApplicationInfo appInfo = aInfo.applicationInfo;
 				m3rdPartyPackageName.add(appInfo.packageName);
-				entries.add(new SimpleItemWithIcon(appInfo.loadLabel(getPackageManager()), null, 
+				thirdparty_entries.add(new SimpleItemWithIcon(appInfo.loadLabel(getPackageManager()), null, 
 						appInfo.loadIcon(getPackageManager())));
 
 			}
-
 		}
+		
+		
 
 		//Put them on the listview
-		TextWithIconAdapter adapter = new TextWithIconAdapter(this,
-				R.layout.filesource_item, entries);
+		SeparatedListAdapter section_adapter = new SeparatedListAdapter(this);
+		
+		TextWithIconAdapter primary_adapter = new TextWithIconAdapter(this,
+				R.layout.filesource_item, primary_entries);
+		section_adapter.addSection("PRINT FROM", primary_adapter);
+		
+		if(!thirdparty_entries.isEmpty())
+		{
+			TextWithIconAdapter thirdparty_adapter = new TextWithIconAdapter(this,
+					R.layout.filesource_item, thirdparty_entries);
+			section_adapter.addSection("ALSO FROM APPS", thirdparty_adapter);
+		}
 
-		lvFileSource.setAdapter(adapter);
+		lvFileSource.setAdapter(section_adapter);
 
 	}
 
@@ -125,28 +139,37 @@ public class SourceSelectScreen extends Activity implements OnItemClickListener 
 
 	public void onItemClick(AdapterView<?> parent, View view, int position,
 			long id) {
-		if (position == 0) {
+		final int PRIMARY_INDEX = 1;
+		final int THIRDPARTY_INDEX = 5;
+		if (position == PRIMARY_INDEX) {
 			//SD CARD
 			Intent intent = new Intent(this, LocalFileBrowser.class);
 			startActivityForResult(intent, REQUEST_SDCARD);
-		} else if (position == 1) {
+		} else if (position == PRIMARY_INDEX+1) {
 			//Remote ENIAC Server
 			LoginScreen.resetConnection();
 			Intent intent = new Intent(this, RemoteFileBrowser.class);
 			startActivityForResult(intent, REQUEST_ENIAC);
-		} else if (position == 2) {
+		} else if (position == PRIMARY_INDEX+2) {
 			//FilePicker API
 			Intent intent = new Intent(this, FilePicker.class);
 			startActivityForResult(intent, FilePickerAPI.REQUEST_CODE_GETFILE);
 		}
 		else
 		{
-			//3rd party file browser
-			int item_index=position-3;
-			Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-			intent.setType("file/*");
-			intent.setPackage(m3rdPartyPackageName.get(item_index));
-			startActivityForResult(intent, REQUEST_THIRDPARTY);
+			try
+			{
+				//3rd party file browser
+				int item_index=position-THIRDPARTY_INDEX;
+				Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+				intent.setType("file/*");
+				intent.setPackage(m3rdPartyPackageName.get(item_index));
+				startActivityForResult(intent, REQUEST_THIRDPARTY);
+			}
+			catch(android.content.ActivityNotFoundException e)
+			{
+				Log.e("SourceSelectScreen", "App activity not found.");
+			}
 		}
 			
 	}
