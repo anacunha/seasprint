@@ -17,7 +17,8 @@ public class PrintCaller {
     
 	private String DEFAULT_PRINTER = null;
 	
-	public String runCommand(String cmd) throws IOException{ 
+	public String runCommand(String cmd) throws IOException{
+		Log.d("ENIAC Command", cmd);
 		String out = mConn.execWithReturn(cmd);
 		return out;
 	}
@@ -52,14 +53,10 @@ public class PrintCaller {
 	public void printFile(String fileName, boolean isMicrosoft, String printerName, int numCopies, boolean duplex) throws IOException {
 		//Print document
 	    if (isMicrosoft) {
-    	    //runCommand("ooffice -norestore -nofirststartwizard -nologo -headless -pt " + printerName + " " + fileName);
-	    	runCommand("ooffice --norestore --nofirststartwizard --nologo --headless --print-to-file --outdir ~ \"" + fileName + "\"");
-	    	Log.d("Print", "lpr -P" + printerName + " -# " + numCopies + (duplex ? " -o sides=two-sided-long-edge" : "") + " \"" + fileName + ".ps\"");
-    	    runCommand("lpr -P" + printerName + " -# " + numCopies + (duplex ? " -o sides=two-sided-long-edge" : "") + " \"" + fileName + ".ps\"");
-    	    runCommand("rm \"" + fileName + ".ps\"");
+    	    runCommand("unoconv --stdout \"" + fileName + "\" | " + 
+	    			"lpr -P" + printerName + " -# " + numCopies + (duplex ? " -o sides=two-sided-long-edge" : ""));
     	}
     	else {
-    		Log.d("Print", "lpr -P" + printerName + " -# " + numCopies + (duplex ? " -o sides=two-sided-long-edge" : "") + " \"" + fileName + "\"");
     	    runCommand("lpr -P" + printerName + " -# " + numCopies + (duplex ? " -o sides=two-sided-long-edge" : "") + " \"" + fileName + "\"");
     	}
 	}

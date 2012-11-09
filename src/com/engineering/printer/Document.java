@@ -11,7 +11,11 @@ import android.net.Uri;
  * Document that is pending to be printed
  */
 public class Document {
+	private boolean isRemote = false;
+    private String remotePath = "";
+    
     private byte [] mData;
+    
     private String mDisplayName = "N/A";
     private String mType = "";
     private String mExt = "";
@@ -60,9 +64,14 @@ public class Document {
 		InputStream datain = context.getContentResolver().openInputStream(uri);
 		int count = datain.available();
 		mData = new byte[count];
+	
 		datain.read(mData, 0, count);
 
-		String uriStr = uri.toString();
+		guessDisplayName(uri.toString());
+	}
+	
+	private void guessDisplayName(String uriStr)
+	{
 		if (uriStr.substring(0, 4).equals("file"))
 			setDisplayName(uriStr.substring(uriStr.lastIndexOf("/")+1,
 					uriStr.length()));
@@ -113,8 +122,35 @@ public class Document {
     	load(context, uri);
         setMimeType(mimeType);
 	}   
+    
+    /**
+     * Specify a remote document. 
+     * @param remotePath
+     */
+    public Document(String remotePath)
+    {
+    	this.isRemote = true;
+    	this.remotePath = remotePath;
+    	
+    	String typeFromName = URLConnection.guessContentTypeFromName(remotePath); 
+    	if(typeFromName != null)
+    		setMimeType(typeFromName);
+    	
+    	setDisplayName(remotePath.substring(remotePath.lastIndexOf("/")+1,
+    			remotePath.length()));
+    }
 
 
+    public boolean isRemote()
+    {
+    	return isRemote;
+    }
+    
+    public String getRemotePath()
+    {
+    	return remotePath;
+    }
+    
     public void setMimeType(String mimeType)
     {
     	if(mimeType != null)

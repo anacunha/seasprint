@@ -132,8 +132,14 @@ public class SourceSelectScreen extends Activity implements OnItemClickListener 
 			}
 		} else if (requestCode == REQUEST_ENIAC) {
 			// TODO ENIAC Printing not implemented
-			Toast.makeText(this, "ENIAC Printing not implemented.",
-					Toast.LENGTH_LONG).show();
+			String fileChosen = data.getExtras().getString(
+					"com.engineering.printer.fileChosen");
+			//Send Intent to PrinterSelectScreen
+			Intent printIntent = new Intent(this, PrinterSelectScreen.class);
+			printIntent.putExtra("com.engineering.printer.remotePath", fileChosen);
+			startActivityForResult(printIntent, REQUEST_PRINT);
+			//Toast.makeText(this, "ENIAC Printing not implemented."+fileChosen,
+			//		Toast.LENGTH_LONG).show();
 		}
 	}
 

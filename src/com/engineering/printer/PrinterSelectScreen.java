@@ -92,7 +92,10 @@ public class PrinterSelectScreen extends Activity {
 				job.duplex = mDuplexCheck.isChecked();
 				job.numCopies = mNumberPicker.value;
 				job.printer = mFavoredPrinter;
-				new UploadFileTask(PrinterSelectScreen.this).execute(job);
+				if(!mDocument.isRemote())
+					new UploadFileTask(PrinterSelectScreen.this).execute(job);
+				else
+					new CallPrinterTask(PrinterSelectScreen.this).execute(job);
 			}
 		});
 
@@ -108,19 +111,11 @@ public class PrinterSelectScreen extends Activity {
 							getIntent().getType());
 				else
 					mDocument = new Document(this, getIntent().getData());
-				if (!mDocument.getMimeType().equals("")) {
-					if (!mDocument.IsSupported()) {
-						Toast.makeText(PrinterSelectScreen.this,
-								"File format is not supported.",
-								Toast.LENGTH_LONG).show();
-						this.finish();
-						return;
-					}
-				} else {
-					Toast.makeText(PrinterSelectScreen.this,
-							"File format not recognized, proceed anyway.",
-							Toast.LENGTH_LONG).show();
-				}
+			}
+			else if(getIntent().getExtras() != null && getIntent().getExtras().containsKey("com.engineering.printer.remotePath"))
+			{
+				String remotePath = getIntent().getExtras().getString("com.engineering.printer.remotePath");
+				mDocument = new Document(remotePath);
 			}
 			else
 			{
@@ -128,6 +123,20 @@ public class PrinterSelectScreen extends Activity {
 						Toast.LENGTH_LONG).show();
 				this.finish();
 				return;
+			}
+			
+			if (mDocument != null && !mDocument.getMimeType().equals("")) {
+				if (!mDocument.IsSupported()) {
+					Toast.makeText(PrinterSelectScreen.this,
+							"File format is not supported.",
+							Toast.LENGTH_LONG).show();
+					this.finish();
+					return;
+				}
+			} else {
+				Toast.makeText(PrinterSelectScreen.this,
+						"File format not recognized, proceed anyway.",
+						Toast.LENGTH_LONG).show();
 			}
 		} catch (IOException e) {
 			Log.e("Connection", "File Not Found");

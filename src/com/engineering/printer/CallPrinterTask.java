@@ -51,13 +51,21 @@ public class CallPrinterTask extends AsyncTask<PrintJobInfo, Integer, Boolean> {
 			boolean duplex = params[0].duplex;
 			int numCopies = params[0].numCopies;
 			Document doc = params[0].doc;
+			
+			//Override if file is already on the ENIAC server
+			if(doc.isRemote())
+				remote_filename = doc.getRemotePath();
+			
 			if (null == LoginScreen.getConnection())
 				return false;
 			CommandConnection cc = new CommandConnection(
 					LoginScreen.getConnection());
 			new PrintCaller(cc).printFile(remote_filename, doc.IsMicrosoft(),
 					printer, numCopies, duplex);
-			cc.execWithReturn("rm " + remote_filename);
+			
+			//DONT remove original file
+			if(!doc.isRemote())
+				cc.execWithReturn("rm " + remote_filename);
 
 			return true;
 		} catch (IOException e) {
