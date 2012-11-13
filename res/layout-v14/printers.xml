@@ -23,11 +23,13 @@
                 android:gravity="center_vertical"
                 android:orientation="horizontal" >
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/print_job_prompt"
-                    android:textSize="16sp" />
+                <ImageView
+                    android:id="@+id/item_icon"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:layout_gravity="center"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/file_icon" />
 
                 <TextView
                     android:id="@+id/tvFilename"
@@ -45,7 +47,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="2dp"
                 android:layout_marginBottom="10dip"
-                android:layout_marginTop="10dip"
+                android:layout_marginTop="3dip"
                 android:background="@android:drawable/divider_horizontal_bright" />
 
             <TextView
