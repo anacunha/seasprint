@@ -9,6 +9,7 @@ import com.engineering.printer.TextWithIconAdapter.SimpleItemWithIcon;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
@@ -33,12 +34,21 @@ import io.filepicker.FilePickerAPI;
  */
 public class SourceSelectScreen extends Activity implements OnItemClickListener {
 	private static final String FILEPICKER_KEY = "AC0gvvjhEQzK-cP5HE5cLz";
+
+	//Request codes for different activities
 	private final int REQUEST_PRINT = 1;
 	private final int REQUEST_SDCARD = 2;
 	private final int REQUEST_ENIAC = 3;
 	private final int REQUEST_THIRDPARTY = 4;
 
+	//The combined adapter
+	private SeparatedListAdapter section_adapter;
+	
 	private List<String> m3rdPartyPackageName = new ArrayList<String>();
+	
+	private List<ItemWithIcon> history_entries = new ArrayList<ItemWithIcon>();;
+	private List<String> history_items = new ArrayList<String>();
+	
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.sourceselect);
@@ -56,7 +66,7 @@ public class SourceSelectScreen extends Activity implements OnItemClickListener 
 				null));
 		primary_entries.add(new SimpleItemWithIcon("Remote ENIAC Server",
 				R.drawable.eniac_icon, null));
-		primary_entries.add(new SimpleItemWithIcon("Other Cloud Services",
+		primary_entries.add(new SimpleItemWithIcon("Cloud Services",
 				R.drawable.filepicker_icon, null));
 		
 		//List third party file browser
@@ -77,10 +87,8 @@ public class SourceSelectScreen extends Activity implements OnItemClickListener 
 			}
 		}
 		
-		
-
 		//Put them on the listview
-		SeparatedListAdapter section_adapter = new SeparatedListAdapter(this);
+		section_adapter = new SeparatedListAdapter(this);
 		
 		TextWithIconAdapter primary_adapter = new TextWithIconAdapter(this,
 				R.layout.filesource_item, primary_entries);
@@ -92,22 +100,47 @@ public class SourceSelectScreen extends Activity implements OnItemClickListener 
 					R.layout.filesource_item, thirdparty_entries);
 			section_adapter.addSection("ALSO FROM APPS", thirdparty_adapter);
 		}
+				
+		TextWithIconAdapter history_adapter = new TextWithIconAdapter(this,
+				R.layout.file_item, history_entries);
+		section_adapter.addSection("HISTORY", history_adapter);
+	
 
 		lvFileSource.setAdapter(section_adapter);
 
 	}
-
+	
+	@Override
+	public void onStart()
+	{
+		super.onStart();
+		
+		this.history_items = PrintHistory.getHistory(this);
+		history_entries.clear();
+		if(history_items.isEmpty())
+			history_entries.add(new SimpleItemWithIcon("No history yet.", null, null));
+		else
+		{
+			for(String s:history_items)
+			{
+				history_entries.add(new SimpleItemWithIcon(Document.guessDisplayName(this, s), R.drawable.file_icon, null));
+			}
+		}
+		section_adapter.notifyDataSetChanged();
+	
+	}
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		// Result was cancelled by the user or there was an error
+		if (resultCode != RESULT_OK)
+			return;
+		
 		if (requestCode == REQUEST_PRINT)
 			;// Do nothing
 		else if (requestCode == FilePickerAPI.REQUEST_CODE_GETFILE
 				|| requestCode == REQUEST_SDCARD 
 				|| requestCode == REQUEST_THIRDPARTY) {
 
-			// Result was cancelled by the user or there was an error
-			if (resultCode != RESULT_OK)
-				return;
 			//Read uri
 			Uri uri = null;
 			if (requestCode == REQUEST_SDCARD) {
@@ -131,50 +164,60 @@ public class SourceSelectScreen extends Activity implements OnItemClickListener 
 						Toast.LENGTH_LONG).show();
 			}
 		} else if (requestCode == REQUEST_ENIAC) {
-			// TODO ENIAC Printing not implemented
-			String fileChosen = data.getExtras().getString(
-					"com.engineering.printer.fileChosen");
+			if(data.getExtras() == null)
+				return;
+			String fileChosen = data.getExtras().getString("com.engineering.printer.fileChosen");
+			if(fileChosen == null)
+				return;
 			//Send Intent to PrinterSelectScreen
 			Intent printIntent = new Intent(this, PrinterSelectScreen.class);
 			printIntent.putExtra("com.engineering.printer.remotePath", fileChosen);
 			startActivityForResult(printIntent, REQUEST_PRINT);
-			//Toast.makeText(this, "ENIAC Printing not implemented."+fileChosen,
-			//		Toast.LENGTH_LONG).show();
 		}
 	}
 
 	public void onItemClick(AdapterView<?> parent, View view, int position,
 			long id) {
-		final int PRIMARY_INDEX = 1;
-		final int THIRDPARTY_INDEX = 5;
-		if (position == PRIMARY_INDEX) {
-			//SD CARD
-			Intent intent = new Intent(this, LocalFileBrowser.class);
-			startActivityForResult(intent, REQUEST_SDCARD);
-		} else if (position == PRIMARY_INDEX+1) {
-			//Remote ENIAC Server
-			LoginScreen.resetConnection();
-			Intent intent = new Intent(this, RemoteFileBrowser.class);
-			startActivityForResult(intent, REQUEST_ENIAC);
-		} else if (position == PRIMARY_INDEX+2) {
-			//FilePicker API
-			Intent intent = new Intent(this, FilePicker.class);
-			startActivityForResult(intent, FilePickerAPI.REQUEST_CODE_GETFILE);
+		if(position < section_adapter.getLowestIndex(1))
+		{
+			int inner_position = position - section_adapter.getLowestIndex(0); 
+			if (inner_position == 0) { //SD CARD
+				Intent intent = new Intent(this, LocalFileBrowser.class);
+				startActivityForResult(intent, REQUEST_SDCARD);
+			} else if (inner_position == 1) { //Remote ENIAC Server
+				LoginScreen.resetConnection();
+				Intent intent = new Intent(this, RemoteFileBrowser.class);
+				startActivityForResult(intent, REQUEST_ENIAC);
+			} else if (inner_position == 2) { //FilePicker API
+				Intent intent = new Intent(this, FilePicker.class);
+				startActivityForResult(intent, FilePickerAPI.REQUEST_CODE_GETFILE);
+			}
 		}
-		else
+		else if(position < section_adapter.getLowestIndex(2)) // start 3rd party file browser
 		{
 			try
 			{
-				//3rd party file browser
-				int item_index=position-THIRDPARTY_INDEX;
+				int inner_position = position - section_adapter.getLowestIndex(1);
 				Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
 				intent.setType("file/*");
-				intent.setPackage(m3rdPartyPackageName.get(item_index));
+				intent.setPackage(m3rdPartyPackageName.get(inner_position));
 				startActivityForResult(intent, REQUEST_THIRDPARTY);
 			}
 			catch(android.content.ActivityNotFoundException e)
 			{
 				Log.e("SourceSelectScreen", "App activity not found.");
+			}
+		}
+		else
+		{
+			int inner_position = position - section_adapter.getLowestIndex(2);
+			if(!history_items.isEmpty()) //In case clicking on "No history yet."
+			{
+				Uri uri = Uri.parse(history_items.get(inner_position));
+				//Send Intent to PrinterSelectScreen
+				Intent printIntent = new Intent(this, PrinterSelectScreen.class);
+				printIntent.setData(uri);
+				startActivityForResult(printIntent, REQUEST_PRINT);
 			}
 		}
 			

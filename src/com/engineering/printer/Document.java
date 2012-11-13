@@ -6,7 +6,9 @@ import java.io.InputStream;
 import java.net.URLConnection;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.net.Uri;
+import android.provider.MediaStore;
 /**
  * Document that is pending to be printed
  */
@@ -59,27 +61,53 @@ public class Document {
 	 * @param context
 	 * @param uri
 	 * @throws IOException
+	 * @throws SecurityException if context doesn't have the permission to read uri
 	 */
-	private void load(Context context, Uri uri) throws IOException {
+	private void load(Context context, Uri uri) throws IOException, SecurityException {
 		InputStream datain = context.getContentResolver().openInputStream(uri);
 		int count = datain.available();
 		mData = new byte[count];
 	
 		datain.read(mData, 0, count);
 
-		guessDisplayName(uri.toString());
+		setDisplayName( guessDisplayName(context, uri.toString()) );
+		mExt = guessExt(uri.toString());
 	}
 	
-	private void guessDisplayName(String uriStr)
+	public static String guessDisplayName(Context context, String uriStr)
 	{
-		if (uriStr.substring(0, 4).equals("file"))
-			setDisplayName(uriStr.substring(uriStr.lastIndexOf("/")+1,
-					uriStr.length()));
-		else {
-			setDisplayName(uriStr);
+		Uri uri = Uri.parse(uriStr);
+		String fileName = uriStr;
+		if(uri!=null)
+		{
+			String scheme = uri.getScheme();
+			if ("file".equals(scheme))
+			{
+				fileName = uri.getLastPathSegment();
+			}
+			else if("content".equals(scheme)){
+			    String[] proj = { MediaStore.Images.Media.TITLE };
+			    try
+			    {
+				    Cursor cursor = context.getContentResolver().query(uri, proj, null, null, null);
+				    if (cursor != null && cursor.getCount() != 0) {
+				        int columnIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.TITLE);
+				        cursor.moveToFirst();
+				        fileName = cursor.getString(columnIndex);
+				    }
+			    }
+			    catch(Exception e)
+			    { }
+			}
+			else
+				fileName = uriStr.substring(uriStr.lastIndexOf("/")+1,
+						uriStr.length());
 		}
-		
-		mExt = uriStr.substring(uriStr.lastIndexOf(".")+1,uriStr.length());
+		return fileName;
+	}
+
+	public static String guessExt(String path) {
+		return path.substring(path.lastIndexOf(".")+1,path.length());
 	}
 	
 	/**
@@ -90,9 +118,10 @@ public class Document {
 	 * name as the uri.
 	 * @param context
 	 * @param uri
+	 * @throws SecurityException if context doesn't have the permission to read uri
 	 * @throws IOException
 	 */
-    public Document(Context context, Uri uri) throws IOException
+    public Document(Context context, Uri uri) throws IOException, SecurityException
     {
     	load(context, uri);
     	
@@ -116,8 +145,9 @@ public class Document {
      * @param uri
      * @param mimeType
      * @throws IOException
+     * @throws SecurityException if context doesn't have the permission to read uri
      */
-    public Document(Context context, Uri uri, String mimeType) throws IOException
+    public Document(Context context, Uri uri, String mimeType) throws IOException, SecurityException
     {
     	load(context, uri);
         setMimeType(mimeType);
@@ -125,9 +155,10 @@ public class Document {
     
     /**
      * Specify a remote document. 
-     * @param remotePath
+     * @param context
+     * @param remotePath The file path on the remote server
      */
-    public Document(String remotePath)
+    public Document(Context context, String remotePath)
     {
     	this.isRemote = true;
     	this.remotePath = remotePath;
@@ -136,8 +167,8 @@ public class Document {
     	if(typeFromName != null)
     		setMimeType(typeFromName);
     	
-    	setDisplayName(remotePath.substring(remotePath.lastIndexOf("/")+1,
-    			remotePath.length()));
+    	setDisplayName( guessDisplayName(context, remotePath) );
+    	mExt = guessExt(remotePath);
     }
 
 

@@ -48,7 +48,7 @@ public class TextWithIconAdapter extends
 
 	/**
 	 * A simple implementation of TextWithIconAdapter
-	 * @author nleven
+	 * @author Jun Ying
 	 *
 	 */
 	public static class SimpleItemWithIcon implements
@@ -136,6 +136,8 @@ public class TextWithIconAdapter extends
 			iv.setImageResource(item.getIconResourceId());
 		else if(item.getIconDrawable()!=null)
 			iv.setImageDrawable(item.getIconDrawable());
+		else
+			iv.setImageResource(0);
 
 		return row;
 	}

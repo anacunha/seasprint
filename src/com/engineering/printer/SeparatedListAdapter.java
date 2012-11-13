@@ -19,6 +19,30 @@ public class SeparatedListAdapter extends BaseAdapter {
 		headers = new ArrayAdapter<String>(context, R.layout.section_item);
 	}
 	
+	
+	/**
+	 * Get the lowest item position of a section.
+	 * @param sectionIndex the index of the section
+	 * @return the index of the first item in this section. Index starts from zero.
+	 * @throws IllegalArgumentException if the section index is out of range
+	 */
+	public int getLowestIndex(int sectionIndex) throws IllegalArgumentException
+	{
+		if(sectionIndex < 0 || sectionIndex >= sections.size())
+		{
+			throw new IllegalArgumentException();
+		}
+		int lowestIndex = 0;
+		for(int i=0; i < headers.getCount()&&i<sectionIndex; i++)
+		{
+			lowestIndex += sections.get(headers.getItem(i)).getCount();			
+		}
+		//Also count the section headers.
+		lowestIndex += sectionIndex + 1;
+		return lowestIndex;
+		
+	}
+	
 	public void addSection(String section, Adapter adapter) {
 		this.headers.add(section);
 		this.sections.put(section, adapter);

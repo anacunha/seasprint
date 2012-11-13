@@ -111,11 +111,12 @@ public class PrinterSelectScreen extends Activity {
 							getIntent().getType());
 				else
 					mDocument = new Document(this, getIntent().getData());
+				PrintHistory.putHistory(this, getIntent().getDataString());
 			}
 			else if(getIntent().getExtras() != null && getIntent().getExtras().containsKey("com.engineering.printer.remotePath"))
 			{
 				String remotePath = getIntent().getExtras().getString("com.engineering.printer.remotePath");
-				mDocument = new Document(remotePath);
+				mDocument = new Document(this, remotePath);
 			}
 			else
 			{
@@ -138,8 +139,8 @@ public class PrinterSelectScreen extends Activity {
 						"File format not recognized, proceed anyway.",
 						Toast.LENGTH_LONG).show();
 			}
-		} catch (IOException e) {
-			Log.e("Connection", "File Not Found");
+		} catch (Exception e) {
+			e.printStackTrace();
 			Toast.makeText(PrinterSelectScreen.this, "Cannot open file.",
 					Toast.LENGTH_LONG).show();
 			this.finish();
