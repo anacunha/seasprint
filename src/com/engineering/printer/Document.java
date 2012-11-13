@@ -1,6 +1,7 @@
 package com.engineering.printer;
 
 import java.io.ByteArrayInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLConnection;
@@ -15,14 +16,18 @@ import android.provider.MediaStore;
 public class Document {
 	private boolean isRemote = false;
     private String remotePath = "";
+    private Uri uri;
     
-    private byte [] mData;
+    private InputStream mInputStream;
     
     private String mDisplayName = "N/A";
     private String mType = "";
     private String mExt = "";
+    
+    private Context context;
+
     /*
-     * Mime type of microsoft office documents
+     * Mime-type of Microsoft office documents
      */
 	private final static String [] msDocsMimeType = {
 			"application/vnd.ms-powerpoint",
@@ -55,25 +60,11 @@ public class Document {
 			"txt", "rtf", "pdf" };
 
 	/**
-	 * Load a uri resource to mData. 
-	 * Set the display name to the base name if it's a file. Otherwise, set the display
-	 * name as the uri. 
+	 * Give a filename appropriate for display.
 	 * @param context
-	 * @param uri
-	 * @throws IOException
-	 * @throws SecurityException if context doesn't have the permission to read uri
+	 * @param uriStr a Uri string or a file path.
+	 * @return
 	 */
-	private void load(Context context, Uri uri) throws IOException, SecurityException {
-		InputStream datain = context.getContentResolver().openInputStream(uri);
-		int count = datain.available();
-		mData = new byte[count];
-	
-		datain.read(mData, 0, count);
-
-		setDisplayName( guessDisplayName(context, uri.toString()) );
-		mExt = guessExt(uri.toString());
-	}
-	
 	public static String guessDisplayName(Context context, String uriStr)
 	{
 		Uri uri = Uri.parse(uriStr);
@@ -118,22 +109,31 @@ public class Document {
 	 * name as the uri.
 	 * @param context
 	 * @param uri
-	 * @throws SecurityException if context doesn't have the permission to read uri
-	 * @throws IOException
 	 */
-    public Document(Context context, Uri uri) throws IOException, SecurityException
+    public Document(Context context, Uri uri)
     {
-    	load(context, uri);
+		this.context = context;
+		this.uri = uri;
     	
+		setDisplayName( guessDisplayName(context, uri.toString()) );
+		mExt = guessExt(uri.toString());
+		
     	String typeFromName = URLConnection.guessContentTypeFromName(uri.toString()); 
     	if(typeFromName != null)
     		setMimeType(typeFromName);
     	else
     	{
-    		ByteArrayInputStream is = new ByteArrayInputStream(mData);
-        	String typeFromStream = URLConnection.guessContentTypeFromStream(is);
-        	if(typeFromStream != null)
-        		setMimeType(typeFromStream);
+    		try
+    		{
+	    		InputStream is = getStream();
+	        	String typeFromStream = URLConnection.guessContentTypeFromStream(is);
+	        	if(typeFromStream != null)
+	        		setMimeType(typeFromStream);
+    		}
+    		catch(Exception e)
+    		{ 
+    			e.printStackTrace();
+    		}
     	}
     }
 
@@ -144,12 +144,14 @@ public class Document {
      * @param context
      * @param uri
      * @param mimeType
-     * @throws IOException
-     * @throws SecurityException if context doesn't have the permission to read uri
      */
-    public Document(Context context, Uri uri, String mimeType) throws IOException, SecurityException
+    public Document(Context context, Uri uri, String mimeType)
     {
-    	load(context, uri);
+		this.context = context;
+		this.uri = uri;
+    	
+		setDisplayName( guessDisplayName(context, uri.toString()) );
+		mExt = guessExt(uri.toString());
         setMimeType(mimeType);
 	}   
     
@@ -160,6 +162,7 @@ public class Document {
      */
     public Document(Context context, String remotePath)
     {
+		this.context = context;
     	this.isRemote = true;
     	this.remotePath = remotePath;
     	
@@ -250,11 +253,26 @@ public class Document {
     }
     
     /**
-     * Read the data of this document.
-     * @return
+     * Get the input stream to read this document.
+     * @return The InputStream. Null if it's a remote document.
+     * @throws FileNotFoundException 
      */
-    public byte[] getData(){
-    	return mData;
+    public InputStream getStream() throws FileNotFoundException{
+    	return context.getContentResolver().openInputStream(uri);
     }
     
+    /**
+     * Get the data of this document.
+     * Poor performance on large document.
+     * @return
+     * @throws IOException 
+     * @see getStream()
+     */
+    public byte[] getData() throws IOException{
+    	InputStream is = getStream();
+    	int count = is.available();
+    	byte [] data = new byte[count];
+		is.read(data);
+    	return data;
+    }
 }

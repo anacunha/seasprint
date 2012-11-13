@@ -58,18 +58,35 @@ public class UploadFileTask extends AsyncTask<PrintJobInfo, Integer, Boolean> {
 		// TODO clean up temporary file
 	}
 
+	private String errMsg = "Oops! Upload failed.";
+	
 	@Override
 	protected Boolean doInBackground(PrintJobInfo... arg0) {
+		mJobInfo = arg0[0];
+		
+		byte [] data;
 		try {
-			mJobInfo = arg0[0];
+			data = mJobInfo.doc.getData();
+		}
+		catch(Exception e)
+		{
+			Log.e("IO", "Cannot read file.");
+			e.printStackTrace();
+			errMsg = "Oops! Can not read file.";
+			return false;
+		}
+		try {
+
 			if (LoginScreen.getConnection() == null)
 				return false;
 
 			FileUpload fu = new FileUpload(LoginScreen.getConnection());
-			upload = fu.startUpload(mJobInfo.doc.getData(), eb);
-		} catch (IOException ioe) {
+			upload = fu.startUpload(data, eb);
+		} catch (Exception e) {
 			LoginScreen.resetConnection();
 			Log.e("Connection", "Failed to connect or send");
+			errMsg = "Oops! Cannot connect to ENIAC.";
+			e.printStackTrace();
 			return false;
 		}
 
@@ -101,7 +118,7 @@ public class UploadFileTask extends AsyncTask<PrintJobInfo, Integer, Boolean> {
 			new CallPrinterTask(mAct).execute(mJobInfo);
 		} else {
 			AlertDialog.Builder builder = new AlertDialog.Builder(mAct);
-			builder.setMessage("Oops! Upload failed.")
+			builder.setMessage(errMsg)
 			.setTitle("Error")
 			.create()
 			.show();

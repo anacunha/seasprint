@@ -193,7 +193,7 @@ public class SourceSelectScreen extends Activity implements OnItemClickListener 
 				startActivityForResult(intent, FilePickerAPI.REQUEST_CODE_GETFILE);
 			}
 		}
-		else if(position < section_adapter.getLowestIndex(2)) // start 3rd party file browser
+		else if(!m3rdPartyPackageName.isEmpty() && position < section_adapter.getLowestIndex(2)) // start 3rd party file browser
 		{
 			try
 			{
@@ -210,7 +210,11 @@ public class SourceSelectScreen extends Activity implements OnItemClickListener 
 		}
 		else
 		{
-			int inner_position = position - section_adapter.getLowestIndex(2);
+			int inner_position;
+			if(m3rdPartyPackageName.isEmpty())
+				inner_position = position - section_adapter.getLowestIndex(1);
+			else
+				inner_position = position - section_adapter.getLowestIndex(2);
 			if(!history_items.isEmpty()) //In case clicking on "No history yet."
 			{
 				Uri uri = Uri.parse(history_items.get(inner_position));
