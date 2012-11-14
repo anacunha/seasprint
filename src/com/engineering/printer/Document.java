@@ -1,6 +1,5 @@
 package com.engineering.printer;
 
-import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,9 +15,7 @@ import android.provider.MediaStore;
 public class Document {
 	private boolean isRemote = false;
     private String remotePath = "";
-    private Uri uri;
-    
-    private InputStream mInputStream;
+    private Uri uri = null;
     
     private String mDisplayName = "N/A";
     private String mType = "";
@@ -262,6 +259,31 @@ public class Document {
     }
     
     /**
+     * Determine if this document can be read.
+     * If it's a remote document, it's not readable.
+     * @return is the document readable
+     */
+    public boolean canRead(){
+    	if(isRemote())
+    		return false;
+    	
+    	try
+    	{
+    		InputStream is =getStream();
+    		if(is==null)
+    			return false;
+    		is.read();
+      		is.close();
+    		return true;
+    	}
+    	catch(Exception e)
+    	{
+    		return false;
+    	}
+    	
+    }
+    
+    /**
      * Get the data of this document.
      * Poor performance on large document.
      * @return
@@ -273,6 +295,17 @@ public class Document {
     	int count = is.available();
     	byte [] data = new byte[count];
 		is.read(data);
+		is.close();
     	return data;
+    }
+    
+    /**
+     * Get the uri to this document.
+     * Returns null if it's a remote document.
+     * @return uri to this document
+     */
+    public Uri getUri()
+    {
+    	return this.uri;
     }
 }

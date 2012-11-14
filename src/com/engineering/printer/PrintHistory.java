@@ -60,7 +60,8 @@ public class PrintHistory {
 	/**
 	 * Put a new item to the history.
 	 * Each item is a uri string. The most recent item is the first item.
-	 * This method will merge adjacent identical items.
+	 * This method will merge identical items, leaving only the most recent one.
+	 * If history items exceed MAX_NUM, the least recent items will be removed.
 	 * @param c Context
 	 * @param uriStr 
 	 */

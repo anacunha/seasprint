@@ -10,6 +10,7 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -104,60 +105,66 @@ public class PrinterSelectScreen extends Activity {
 	@Override
 	public void onStart() {
 		super.onStart();
+
 		try {
+			// Load document
 			if (null != getIntent().getData()) {
 				if (null != getIntent().getType())
 					mDocument = new Document(this, getIntent().getData(),
 							getIntent().getType());
 				else
 					mDocument = new Document(this, getIntent().getData());
-				PrintHistory.putHistory(this, getIntent().getDataString());
-			}
-			else if(getIntent().getExtras() != null && getIntent().getExtras().containsKey("com.engineering.printer.remotePath"))
-			{
-				String remotePath = getIntent().getExtras().getString("com.engineering.printer.remotePath");
+
+				if (!mDocument.canRead())
+					throw new Exception("Cannot read file.");
+			} else if (getIntent().getExtras() != null
+					&& getIntent().getExtras().containsKey(
+							"com.engineering.printer.remotePath")) {
+				String remotePath = getIntent().getExtras().getString(
+						"com.engineering.printer.remotePath");
 				mDocument = new Document(this, remotePath);
+			} else {
+				throw new Exception("File not specified.");
 			}
-			else
-			{
-				Toast.makeText(this, "Cannot read file.",
-						Toast.LENGTH_LONG).show();
-				this.finish();
-				return;
-			}
-			
+
+			// Check file format
 			if (mDocument != null && !mDocument.getMimeType().equals("")) {
 				if (!mDocument.IsSupported()) {
-					Toast.makeText(PrinterSelectScreen.this,
-							"File format is not supported.",
-							Toast.LENGTH_LONG).show();
-					this.finish();
-					return;
+					throw new Exception("File format is not supported.");
 				}
 			} else {
 				Toast.makeText(PrinterSelectScreen.this,
 						"File format not recognized, proceed anyway.",
 						Toast.LENGTH_LONG).show();
 			}
+
+			//Put local document into history
+			if(!mDocument.isRemote())
+			{
+				Uri uri = mDocument.getUri();
+				if(uri != null)
+					PrintHistory.putHistory(this, uri.toString());
+			}
+			
+			// Set file display name
+			final TextView tvFileName = (TextView) findViewById(R.id.tvFilename);
+			tvFileName.setText(mDocument.getDisplayName());
+
+			// Show login screen if connection not established
+			if (LoginScreen.getConnection() == null) {
+				Intent myIntent = new Intent(this, LoginScreen.class);
+				startActivityForResult(myIntent, REQUEST_LOGIN);
+			} else {
+				// List printers available
+				new EnumeratePrintersTask().execute((Void) null);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			Toast.makeText(PrinterSelectScreen.this, "Cannot open file.",
-					Toast.LENGTH_LONG).show();
+			Toast.makeText(PrinterSelectScreen.this, e.getMessage(),
+					Toast.LENGTH_SHORT).show();
 			this.finish();
 			return;
 		}
-
-		final TextView tvFileName = (TextView) findViewById(R.id.tvFilename);
-		tvFileName.setText(mDocument.getDisplayName());
-
-		if (LoginScreen.getConnection() == null) {
-			Intent myIntent = new Intent(this, LoginScreen.class);
-			startActivityForResult(myIntent, REQUEST_LOGIN);
-		} else {
-			new EnumeratePrintersTask().execute((Void) null);
-		}
-		
-		
 
 	}
 
