@@ -46,26 +46,21 @@ public class CallPrinterTask extends AsyncTask<PrintJobInfo, Integer, Boolean> {
 	@Override
 	protected Boolean doInBackground(PrintJobInfo... params) {
 		try {
-			String remote_filename = params[0].remoteFilename;
-			String printer = params[0].printer;
-			boolean duplex = params[0].duplex;
-			int numCopies = params[0].numCopies;
-			Document doc = params[0].doc;
+			Document doc = params[0].getDocument();
 			
 			//Override if file is already on the ENIAC server
 			if(doc.isRemote())
-				remote_filename = doc.getRemotePath();
+				params[0].setRemoteFilename(doc.getRemotePath());
 			
 			if (null == LoginScreen.getConnection())
 				return false;
 			CommandConnection cc = new CommandConnection(
 					LoginScreen.getConnection());
-			new PrintCaller(cc).printFile(remote_filename, doc.IsMicrosoft(),
-					printer, numCopies, duplex);
+			new PrintCaller(cc).printFile(params[0]);
 			
 			//DONT remove original file
 			if(!doc.isRemote())
-				cc.execWithReturn("rm " + remote_filename);
+				cc.execWithReturn("rm " + params[0].getRemoteFilename());
 
 			return true;
 		} catch (IOException e) {

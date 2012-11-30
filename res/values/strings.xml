@@ -1,19 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">SEASPrint</string>
-    <string name="printer_prompt">Please select a printer:</string>
-    <string name="duplex_prompt">Duplex printing:</string>
-    <string name="number_prompt">Number of copies:</string>
-    <string name="pps_prompt">Please select the number of pages per sheet</string>
+<string name="app_name">SEASPrint</string>
 <string name="connection_menuitem">Setup Connection</string>
-<string name="print">Print</string>
-<string name="print_job_prompt">Doc:</string>
+<string name="duplex_prompt">Duplex printing:</string>
+<string name="filebrowser_label">Browsing</string>
 <string name="filesource_prompt">Send documents from various places directly to a printer in SEAS.</string>
+<string name="final_page">Final Page</string>
+<string name="fitpage_prompt">Fit to page:</string>
+<string name="hostname_label">Hostname</string>
+<string name="initial_page">Initial Page</string>
+<string name="landscape">Landscape</string>
+<string name="login_btn_label">Login</string>
+<string name="number_prompt">Number of copies:</string>
+<string name="page_orientation">Page Orientation</string>
+<string name="page_orientation_prompt">Page orientation:</string>
+<string name="page_range_prompt">Page Range:</string>
 <string name="pennkey_label">PennKey</string>
 <string name="pennpwd_label">Password</string>
-<string name="hostname_label">Hostname</string>
 <string name="port_label">Port</string>
+<string name="portrait">Portrait</string>
+<string name="pps_prompt">Please select the number of pages per sheet</string>
+<string name="print">Print</string>
+<string name="print_document">Print Document</string>
+<string name="print_job_prompt">Doc:</string>
+<string name="printer_prompt">Please select a printer:</string>
 <string name="saveinfo_label">Save my info</string>
-<string name="login_btn_label">Login</string>
-<string name="filebrowser_label">Browsing</string>
 </resources>

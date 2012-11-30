@@ -26,6 +26,7 @@ import android.widget.Checkable;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 public class PrinterSelectScreen extends Activity {
 	private static final String PRINTER_PREF = "SEASPrintingFavorite";
@@ -35,6 +36,8 @@ public class PrinterSelectScreen extends Activity {
 	private Document mDocument;
 
 	private Checkable mDuplexCheck;
+	private Checkable mFitToPageCheck;
+	private ToggleButton mPageOrientation;
 	private Spinner mSpinner;
 	private Button mPrintbutton;
 	private NumberPicker mNumberPicker;
@@ -75,8 +78,11 @@ public class PrinterSelectScreen extends Activity {
 		}
 
 		mDuplexCheck = (Checkable) findViewById(R.id.duplex_check);
+		mFitToPageCheck = (Checkable) findViewById(R.id.fitpage_check);
 
 		mNumberPicker = (NumberPicker) findViewById(R.id.number_picker);
+		
+		mPageOrientation = (ToggleButton) findViewById(R.id.page_orientation);
 		
 		mPrintbutton = (Button) findViewById(R.id.print_button);
 		mPrintbutton.setOnClickListener(new View.OnClickListener() {
@@ -88,11 +94,9 @@ public class PrinterSelectScreen extends Activity {
 				ed.commit();
 
 				// PRINT
-				PrintJobInfo job = new PrintJobInfo();
-				job.doc = mDocument;
-				job.duplex = mDuplexCheck.isChecked();
-				job.numCopies = mNumberPicker.value;
-				job.printer = mFavoredPrinter;
+				PrinterOptions options = new PrinterOptions(mDuplexCheck.isChecked(), mFitToPageCheck.isChecked(), mNumberPicker.value, mPageOrientation.getText().toString(), null);
+				PrintJobInfo job = new PrintJobInfo(mDocument, mFavoredPrinter, options);
+
 				if(!mDocument.isRemote())
 					new UploadFileTask(PrinterSelectScreen.this).execute(job);
 				else
@@ -265,5 +269,4 @@ public class PrinterSelectScreen extends Activity {
 
 		}
 	}
-
 }

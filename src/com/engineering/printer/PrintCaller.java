@@ -50,15 +50,51 @@ public class PrintCaller {
 		return printers;
 	}
 	
-	public void printFile(String fileName, boolean isMicrosoft, String printerName, int numCopies, boolean duplex) throws IOException {
+	public void printFile(PrintJobInfo printJob) throws IOException {
+		String printCommand = getPrintCommand(printJob);
+		
 		//Print document
-	    if (isMicrosoft) {
-    	    runCommand("unoconv --stdout \"" + fileName + "\" | " + 
-	    			"lpr -P" + printerName + " -# " + numCopies + (duplex ? " -o sides=two-sided-long-edge" : ""));
+	    if (printJob.getDocument().IsMicrosoft()) {
+    	    runCommand("unoconv --stdout \"" + printJob.getRemoteFilename() + "\" | " + printCommand);
     	}
     	else {
-    	    runCommand("lpr -P" + printerName + " -# " + numCopies + (duplex ? " -o sides=two-sided-long-edge" : "") + " \"" + fileName + "\"");
+    	    runCommand(printCommand + " \"" + printJob.getRemoteFilename() + "\"");
     	}
+	}
+	
+	private String getPrintCommand(PrintJobInfo printJob)
+	{
+		StringBuilder printCommand = new StringBuilder();
+		//set printer
+		printCommand.append("lpr -P");
+		printCommand.append(printJob.getPrinter());
+		//set number of pages
+		printCommand.append(" -# ");
+		printCommand.append(printJob.getOptions().getNumCopies());
+		
+		//set double sided printing
+		if(printJob.getOptions().isDuplex()) {
+			if(printJob.getOptions().getOrientation().equals("Portrait")) {
+				printCommand.append(" -o portrait");
+				printCommand.append(" -o sides=two-sided-long-edge");
+			}
+			else {
+				printCommand.append(" -o landscape");
+				printCommand.append(" -o sides=two-sided-short-edge");
+			}
+		}
+		else
+			printCommand.append(" -o sides=one-sided");
+		
+		//set fit to page
+		if(printJob.getOptions().isFitToPage())
+			printCommand.append(" -o fit-to-page");
+		
+		//set page range
+		//printCommand.append(" -o page-ranges=" + printJob.getOptions().getRange().getInitialPage());
+		//printCommand.append("-" + printJob.getOptions().getRange().getFinalPage());
+		
+		return printCommand.toString();
 	}
 	
 	public String getDefaultPrinter() throws IOException {

@@ -2,7 +2,7 @@ package com.engineering.printer;
 
 /**
  * A helper data structure that records relevant information for a printing job
- * @author Jun Ying
+ * @author Jun Ying, Ana Cunha
  *
  */
 public class PrintJobInfo
@@ -10,21 +10,64 @@ public class PrintJobInfo
 	/**
 	 * The document to print
 	 */
-	public Document doc;
+	private Document document;
+	
 	/**
 	 * The path for this document on the remote ENIAC server
 	 */
-	public String remoteFilename;
+	private String remoteFilename;
+	
 	/**
 	 * The name of the printer to be used
 	 */
-	public String printer;
+	private String printer;
+	
 	/**
-	 * Should we enable duplex printing?
+	 * Printer options of the printing job.
 	 */
-	public boolean duplex;
+	private PrinterOptions options;
+	
 	/**
-	 * number of copies to be printed
+	 * Creates a new Printing job.
 	 */
-	public int numCopies;
+	public PrintJobInfo(Document document, String printer, PrinterOptions options) {
+		this.document = document;
+		this.printer = printer;
+		this.options = options;
+	}
+	
+	/**
+	 * @return the doc
+	 */
+	public Document getDocument() {
+		return document;
+	}
+
+	/**
+	 * @return the remoteFilename
+	 */
+	public String getRemoteFilename() {
+		return remoteFilename;
+	}
+
+	/**
+	 * @param remoteFilename the remoteFilename to set
+	 */
+	public void setRemoteFilename(String remoteFilename) {
+		this.remoteFilename = remoteFilename;
+	}
+
+	/**
+	 * @return the printer
+	 */
+	public String getPrinter() {
+		return printer;
+	}
+
+	/**
+	 * @return the options
+	 */
+	public PrinterOptions getOptions() {
+		return options;
+	}
 }

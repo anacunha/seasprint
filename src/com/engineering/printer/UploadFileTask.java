@@ -1,12 +1,9 @@
 package com.engineering.printer;
 
-import java.io.IOException;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.util.Log;
@@ -66,7 +63,7 @@ public class UploadFileTask extends AsyncTask<PrintJobInfo, Integer, Boolean> {
 		
 		byte [] data;
 		try {
-			data = mJobInfo.doc.getData();
+			data = mJobInfo.getDocument().getData();
 		}
 		catch(Exception e)
 		{
@@ -114,7 +111,7 @@ public class UploadFileTask extends AsyncTask<PrintJobInfo, Integer, Boolean> {
 	protected void onPostExecute(Boolean result) {
 		mProgressDialog.dismiss();
 		if (result.equals(true)) {
-			mJobInfo.remoteFilename = upload.GetResult();
+			mJobInfo.setRemoteFilename(upload.GetResult());
 			new CallPrinterTask(mAct).execute(mJobInfo);
 		} else {
 			AlertDialog.Builder builder = new AlertDialog.Builder(mAct);
