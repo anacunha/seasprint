@@ -34,7 +34,7 @@ public class PrinterSelectScreen extends Activity {
 	private String mFavoredPrinter;
 
 	private Document mDocument;
-
+	
 	private Checkable mDuplexCheck;
 	private Checkable mFitToPageCheck;
 	private ToggleButton mPageOrientation;
@@ -145,9 +145,10 @@ public class PrinterSelectScreen extends Activity {
 			//Put local document into history
 			if(!mDocument.isRemote())
 			{
+				HistoryManager history = new HistoryManager(this, "SEASPrintHistory", "PrintHistory", 7); 
 				Uri uri = mDocument.getUri();
 				if(uri != null)
-					PrintHistory.putHistory(this, uri.toString());
+					history.putHistory(uri.toString());
 			}
 			
 			// Set file display name

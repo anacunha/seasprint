@@ -17,16 +17,21 @@ import android.net.Uri;
  * @author Jun YING
  * 
  */
-public class PrintHistory {
-	private PrintHistory() {
-	}
-
-	private final static String PREF_NAME = "SEASPrintHistory";
-	private final static String HISTORY_KEY = "PrintHistory";
+public class HistoryManager {
+	private Context c;
+	private String mPrefName;
+	private String mHistKey;
 	/**
 	 * Maximum number of history entries
 	 */
-	private final static int MAX_ITEMS = 7;
+	private int mMaxItems;
+	
+	public HistoryManager(Context c, String prefName, String histKey, int maxItems) {
+		this.c = c;
+		this.mPrefName = prefName;
+		this.mHistKey = histKey;
+		this.mMaxItems = maxItems;
+	}
 
 	/**
 	 * Get a list of history items
@@ -34,10 +39,10 @@ public class PrintHistory {
 	 * @param c Context
 	 * @return a list of history items.
 	 */
-	public static List<String> getHistory(Context c) {
-		SharedPreferences s = c.getSharedPreferences(PREF_NAME,
+	public List<String> getHistory() {
+		SharedPreferences s = c.getSharedPreferences(mPrefName,
 				Context.MODE_PRIVATE);
-		String h = s.getString(HISTORY_KEY, "");
+		String h = s.getString(mHistKey, "");
 		if("".equals(h))
 			return new ArrayList<String>();
 		else
@@ -65,8 +70,8 @@ public class PrintHistory {
 	 * @param c Context
 	 * @param uriStr 
 	 */
-	public static void putHistory(Context c, String uriStr) {
-		List<String> history = getHistory(c);
+	public void putHistory(String uriStr) {
+		List<String> history = getHistory();
 		
 		ArrayList<String> history_no_dup = new ArrayList<String>();
 		history_no_dup.add(uriStr);
@@ -77,14 +82,14 @@ public class PrintHistory {
 			
 		}
 		
-		while (history_no_dup.size() > MAX_ITEMS) {
+		while (history_no_dup.size() > mMaxItems) {
 			history_no_dup.remove(history_no_dup.size()-1);
 		}
 		
-		SharedPreferences s = c.getSharedPreferences(PREF_NAME,
+		SharedPreferences s = c.getSharedPreferences(mPrefName,
 				Context.MODE_PRIVATE);
 		SharedPreferences.Editor editor = s.edit();
-		editor.putString(HISTORY_KEY, join(history_no_dup, "\n"));
+		editor.putString(mHistKey, join(history_no_dup, "\n"));
 		editor.commit();
 	}
 }
