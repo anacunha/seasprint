@@ -42,7 +42,7 @@ public class PrinterSelectScreen extends Activity {
 	private Button mPrintbutton;
 	private NumberPicker mNumberPicker;
 	private ArrayAdapter<CharSequence> mAdapter;
-
+	private HistoryManager hm;
 	private final int REQUEST_LOGIN = 1;
 
 	// public static Integer pps;
@@ -77,6 +77,7 @@ public class PrinterSelectScreen extends Activity {
 			mFavoredPrinter = "169";
 		}
 
+		hm =  new HistoryManager(PrinterSelectScreen.this,PRINTER_PREF,"Printer_Key",4);
 		mDuplexCheck = (Checkable) findViewById(R.id.duplex_check);
 		mFitToPageCheck = (Checkable) findViewById(R.id.fitpage_check);
 
@@ -92,7 +93,7 @@ public class PrinterSelectScreen extends Activity {
 				SharedPreferences.Editor ed = settings.edit();
 				ed.putString(PRINTER_KEY, mFavoredPrinter);
 				ed.commit();
-
+				hm.putHistory(mFavoredPrinter);
 				// PRINT
 				PrinterOptions options = new PrinterOptions(mDuplexCheck.isChecked(), mFitToPageCheck.isChecked(), mNumberPicker.value, mPageOrientation.getText().toString(), null);
 				PrintJobInfo job = new PrintJobInfo(mDocument, mFavoredPrinter, options);
@@ -235,9 +236,18 @@ public class PrinterSelectScreen extends Activity {
 				mAdapter = new ArrayAdapter<CharSequence>(
 						getApplicationContext(), R.layout.spinner_item,
 						new ArrayList<CharSequence>());
+
 				mAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+				
+				
+				List<String> history = hm.getHistory();
+				for(String p: history)
+					mAdapter.add(p);
+				
 				for (Iterator<String> iter = ps.iterator(); iter.hasNext();) {
-					mAdapter.add(iter.next());
+					String iteration = iter.next();
+					if(history.contains(iteration)) continue;
+					mAdapter.add(iteration);
 				}
 				mSpinner = (Spinner) findViewById(R.id.printer_spinner);
 				mSpinner.setAdapter(mAdapter);
