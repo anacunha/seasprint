@@ -2,16 +2,21 @@ package com.engineering.printer;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import com.engineering.printer.TextWithIconAdapter.ItemWithIcon;
+
 import android.content.Context;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Adapter;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 public class SeparatedListAdapter extends BaseAdapter {
 	
-	public final Map<String,Adapter> sections = new LinkedHashMap<String,Adapter>();
+	public final Map<String,BaseAdapter> sections = new LinkedHashMap<String,BaseAdapter>();
 	public final ArrayAdapter<String> headers;
 	public final static int TYPE_SECTION_HEADER = 0;
 	
@@ -19,6 +24,11 @@ public class SeparatedListAdapter extends BaseAdapter {
 		headers = new ArrayAdapter<String>(context, R.layout.section_item);
 	}
 	
+	private boolean useConvertView = true;
+	public void setUseConvertView(boolean useConvertView)
+	{
+		this.useConvertView = useConvertView;
+	}
 	
 	/**
 	 * Get the lowest item position of a section.
@@ -43,7 +53,7 @@ public class SeparatedListAdapter extends BaseAdapter {
 		
 	}
 	
-	public void addSection(String section, Adapter adapter) {
+	public void addSection(String section, BaseAdapter adapter) {
 		this.headers.add(section);
 		this.sections.put(section, adapter);
 	}
@@ -105,14 +115,40 @@ public class SeparatedListAdapter extends BaseAdapter {
 	}
 	
 	public View getView(int position, View convertView, ViewGroup parent) {
+		//Disable convertView when required,
+		//Work around http://code.google.com/p/android/issues/detail?id=17128
+		if(!useConvertView)
+			convertView = null;
+		
 		int sectionnum = 0;
 		for(Object section : this.sections.keySet()) {
 			Adapter adapter = sections.get(section);
 			int size = adapter.getCount() + 1;
 			
-			// check if position inside this section 
+			// check if position inside this section
 			if(position == 0) return headers.getView(sectionnum, convertView, parent);
 			if(position < size) return adapter.getView(position - 1, convertView, parent);
+
+			// otherwise jump into next section
+			position -= size;
+			sectionnum++;
+		}
+		return null;
+	}
+	@Override
+	public View getDropDownView(int position, View convertView, ViewGroup parent) {
+		//Disable convertView when required,
+		//Work around http://code.google.com/p/android/issues/detail?id=17128
+		if(!useConvertView)
+			convertView = null;
+		int sectionnum = 0;
+		for(Object section : this.sections.keySet()) {
+			BaseAdapter adapter = sections.get(section);
+			int size = adapter.getCount() + 1;
+			
+			// check if position inside this section
+			if(position == 0) return headers.getDropDownView(sectionnum, convertView, parent);
+			if(position < size) return adapter.getDropDownView(position - 1, convertView, parent);
 
 			// otherwise jump into next section
 			position -= size;
@@ -124,5 +160,6 @@ public class SeparatedListAdapter extends BaseAdapter {
 	public long getItemId(int position) {
 		return position;
 	}
+	
 
 }

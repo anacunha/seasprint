@@ -2,14 +2,12 @@ package com.engineering.printer;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -30,8 +28,8 @@ import android.widget.ToggleButton;
 
 public class PrinterSelectScreen extends Activity {
 	private static final String PRINTER_PREF = "SEASPrintingFavorite";
-	private static final String PRINTER_KEY = "printerpreference";
-	private String mFavoredPrinter;
+	private static final String PRINTER_HISTORY_KEY = "PrinterHistory";
+	private String mChosenPrinter;
 
 	private Document mDocument;
 	
@@ -41,11 +39,9 @@ public class PrinterSelectScreen extends Activity {
 	private Spinner mSpinner;
 	private Button mPrintbutton;
 	private NumberPicker mNumberPicker;
-	private ArrayAdapter<CharSequence> mAdapter;
-	private HistoryManager hm;
+	
+	private HistoryManager printerHistory;
 	private final int REQUEST_LOGIN = 1;
-
-	// public static Integer pps;
 
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater infl = new MenuInflater(this);
@@ -71,13 +67,10 @@ public class PrinterSelectScreen extends Activity {
 
 		setContentView(R.layout.printers);
 
-		SharedPreferences settings = getSharedPreferences(PRINTER_PREF, 0);
-		mFavoredPrinter = settings.getString(PRINTER_KEY, null);
-		if (mFavoredPrinter == null) {
-			mFavoredPrinter = "169";
-		}
-
-		hm =  new HistoryManager(PrinterSelectScreen.this,PRINTER_PREF,"Printer_Key",4);
+		//Set up printer history
+		printerHistory =  new HistoryManager(PrinterSelectScreen.this, PRINTER_PREF, PRINTER_HISTORY_KEY, 4);
+		
+		//Set up controls
 		mDuplexCheck = (Checkable) findViewById(R.id.duplex_check);
 		mFitToPageCheck = (Checkable) findViewById(R.id.fitpage_check);
 
@@ -88,15 +81,10 @@ public class PrinterSelectScreen extends Activity {
 		mPrintbutton = (Button) findViewById(R.id.print_button);
 		mPrintbutton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				SharedPreferences settings = getSharedPreferences(PRINTER_PREF,
-						0);
-				SharedPreferences.Editor ed = settings.edit();
-				ed.putString(PRINTER_KEY, mFavoredPrinter);
-				ed.commit();
-				hm.putHistory(mFavoredPrinter);
+				printerHistory.putHistory(mChosenPrinter);
 				// PRINT
 				PrinterOptions options = new PrinterOptions(mDuplexCheck.isChecked(), mFitToPageCheck.isChecked(), mNumberPicker.value, mPageOrientation.getText().toString(), null);
-				PrintJobInfo job = new PrintJobInfo(mDocument, mFavoredPrinter, options);
+				PrintJobInfo job = new PrintJobInfo(mDocument, mChosenPrinter, options);
 
 				if(!mDocument.isRemote())
 					new UploadFileTask(PrinterSelectScreen.this).execute(job);
@@ -146,10 +134,9 @@ public class PrinterSelectScreen extends Activity {
 			//Put local document into history
 			if(!mDocument.isRemote())
 			{
-				HistoryManager history = new HistoryManager(this, "SEASPrintHistory", "PrintHistory", 7); 
 				Uri uri = mDocument.getUri();
 				if(uri != null)
-					history.putHistory(uri.toString());
+					printerHistory.putHistory(uri.toString());
 			}
 			
 			// Set file display name
@@ -191,7 +178,7 @@ public class PrinterSelectScreen extends Activity {
 		public void onItemSelected(AdapterView<?> parent, View view, int pos,
 				long id) {
 			// PRINTER WAS SELECTED
-			mFavoredPrinter = parent.getItemAtPosition(pos).toString();
+			mChosenPrinter = parent.getItemAtPosition(pos).toString();
 		}
 
 		public void onNothingSelected(AdapterView<?> parent) {
@@ -232,31 +219,47 @@ public class PrinterSelectScreen extends Activity {
 				PrinterSelectScreen.this.finish();
 				return;
 			} else {
-				boolean has_favored = false;
-				mAdapter = new ArrayAdapter<CharSequence>(
+				
+
+				ArrayAdapter<CharSequence> adpHistories = new ArrayAdapter<CharSequence>(
 						getApplicationContext(), R.layout.spinner_item,
 						new ArrayList<CharSequence>());
-
-				mAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
-				
-				
-				List<String> history = hm.getHistory();
+				adpHistories.setDropDownViewResource(R.layout.spinner_dropdown_item);
+				List<String> history = printerHistory.getHistory();
 				for(String p: history)
-					mAdapter.add(p);
-				
-				for (Iterator<String> iter = ps.iterator(); iter.hasNext();) {
-					String iteration = iter.next();
-					if(history.contains(iteration)) continue;
-					mAdapter.add(iteration);
+				{
+					if(ps.contains(p))
+						adpHistories.add(p);
 				}
+				
+				ArrayAdapter<CharSequence> adpPrinters = new ArrayAdapter<CharSequence>(
+						getApplicationContext(), R.layout.spinner_item,
+						new ArrayList<CharSequence>());
+				adpPrinters.setDropDownViewResource(R.layout.spinner_dropdown_item);
+				
+				for (String s: ps) {
+					adpPrinters.add(s);
+				}
+				
+				SeparatedListAdapter adp = new SeparatedListAdapter(PrinterSelectScreen.this);
+				adp.setUseConvertView(false);
+				
+				if(!adpHistories.isEmpty())
+					adp.addSection("RECENT", adpHistories);
+				adp.addSection("ALL PRINTERS", adpPrinters);
+				
+				
 				mSpinner = (Spinner) findViewById(R.id.printer_spinner);
-				mSpinner.setAdapter(mAdapter);
+				mSpinner.setAdapter(adp);
 				mSpinner.setOnItemSelectedListener(new MyOnItemSelectedListener());
-
-				has_favored = ps.contains(mFavoredPrinter);
-				if (has_favored) {
-					int pos = mAdapter.getPosition(mFavoredPrinter);
-					mSpinner.setSelection(pos);
+				if(!adpHistories.isEmpty()){
+					mSpinner.setSelection(1); //Select most recent printer
+				}
+				else
+				{
+					int defaultPrinter = adpPrinters.getPosition("169");
+					defaultPrinter += 1;//The "ALL PRINTERS" header
+					mSpinner.setSelection(defaultPrinter);
 				}
 
 				pd.dismiss();

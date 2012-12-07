@@ -61,14 +61,14 @@
                 android:id="@+id/printer_spinner"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="15dp"
+                android:layout_marginBottom="10dp"
                 android:padding="10dp"
                 android:prompt="@string/printer_prompt" />
 
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="15dp"
+                android:layout_marginBottom="8dp"
                 android:gravity="center_vertical"
                 android:orientation="horizontal" >
 
@@ -136,6 +136,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
+                android:layout_marginBottom="8dp"
                 android:orientation="horizontal" >
 
                 <TextView
@@ -155,7 +156,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:checked="true"
-                        android:padding="5dp"
                         android:textSize="16sp" />
 
                 </LinearLayout>
@@ -165,6 +165,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
+                android:layout_marginBottom="8dp"
                 android:orientation="horizontal" >
 
                 <TextView
@@ -184,7 +185,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:checked="true"
-                        android:padding="5dp"
                         android:textSize="16sp" />
 
                 </LinearLayout>
@@ -194,6 +194,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
+				android:layout_marginBottom="8dp"
                 android:orientation="horizontal" >
 
                 <TextView
