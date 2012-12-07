@@ -29,7 +29,6 @@ import android.widget.ToggleButton;
 public class PrinterSelectScreen extends Activity {
 	private static final String PRINTER_PREF = "SEASPrintingFavorite";
 	private static final String PRINTER_HISTORY_KEY = "PrinterHistory";
-	private String mChosenPrinter;
 
 	private Document mDocument;
 	
@@ -71,6 +70,7 @@ public class PrinterSelectScreen extends Activity {
 		printerHistory =  new HistoryManager(PrinterSelectScreen.this, PRINTER_PREF, PRINTER_HISTORY_KEY, 4);
 		
 		//Set up controls
+		mSpinner = (Spinner) findViewById(R.id.printer_spinner);
 		mDuplexCheck = (Checkable) findViewById(R.id.duplex_check);
 		mFitToPageCheck = (Checkable) findViewById(R.id.fitpage_check);
 
@@ -81,10 +81,12 @@ public class PrinterSelectScreen extends Activity {
 		mPrintbutton = (Button) findViewById(R.id.print_button);
 		mPrintbutton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				printerHistory.putHistory(mChosenPrinter);
 				// PRINT
+				String chosenPrinter = mSpinner.getSelectedItem().toString();
+				printerHistory.putHistory(chosenPrinter);
+				
 				PrinterOptions options = new PrinterOptions(mDuplexCheck.isChecked(), mFitToPageCheck.isChecked(), mNumberPicker.value, mPageOrientation.getText().toString(), null);
-				PrintJobInfo job = new PrintJobInfo(mDocument, mChosenPrinter, options);
+				PrintJobInfo job = new PrintJobInfo(mDocument, chosenPrinter, options);
 
 				if(!mDocument.isRemote())
 					new UploadFileTask(PrinterSelectScreen.this).execute(job);
@@ -173,19 +175,6 @@ public class PrinterSelectScreen extends Activity {
 		super.onActivityResult(requestCode, resultCode, data);
 	}
 
-	public class MyOnItemSelectedListener implements
-			OnItemSelectedListener {
-		public void onItemSelected(AdapterView<?> parent, View view, int pos,
-				long id) {
-			// PRINTER WAS SELECTED
-			mChosenPrinter = parent.getItemAtPosition(pos).toString();
-		}
-
-		public void onNothingSelected(AdapterView<?> parent) {
-			// Do nothing.
-		}
-	}
-
 	private class EnumeratePrintersTask extends AsyncTask<Void, Void, Boolean> {
 		private ProgressDialog pd;
 		private List<String> ps;
@@ -248,10 +237,8 @@ public class PrinterSelectScreen extends Activity {
 					adp.addSection("RECENT", adpHistories);
 				adp.addSection("ALL PRINTERS", adpPrinters);
 				
-				
-				mSpinner = (Spinner) findViewById(R.id.printer_spinner);
 				mSpinner.setAdapter(adp);
-				mSpinner.setOnItemSelectedListener(new MyOnItemSelectedListener());
+
 				if(!adpHistories.isEmpty()){
 					mSpinner.setSelection(1); //Select most recent printer
 				}
