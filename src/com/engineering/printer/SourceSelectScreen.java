@@ -9,7 +9,6 @@ import com.engineering.printer.TextWithIconAdapter.SimpleItemWithIcon;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;

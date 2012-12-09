@@ -5,7 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -18,8 +20,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Checkable;
@@ -44,6 +44,7 @@ public class PrinterSelectScreen extends Activity {
 	private RadioGroup mRadioPageRange;
 	private HistoryManager printerHistory;
 	private final int REQUEST_LOGIN = 1;
+	private final Context context = this;
 
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater infl = new MenuInflater(this);
@@ -114,8 +115,22 @@ public class PrinterSelectScreen extends Activity {
 				String initialPage = initialPageEdit.getText().toString();
 				String finalPage = finalPageEdit.getText().toString();
 				PageRange pageRange;
-				if(initialPage.equals("") || finalPage.equals(""))
+				if(initialPageEdit.isEnabled() && (initialPage.equals("") || finalPage.equals(""))) {
 					pageRange = null;
+					AlertDialog.Builder dialog = new AlertDialog.Builder(context);
+					dialog.setMessage("Incorrect page range!");
+					dialog.setTitle("Error");
+					dialog.setNegativeButton("Ok", new DialogInterface.OnClickListener() {
+						
+						public void onClick(DialogInterface dialog, int which) {
+							// if this button is clicked, just close
+							// the dialog box and do nothing
+							dialog.cancel();							
+						}
+					});
+					dialog.show();
+					return;
+				}
 				else
 					pageRange = new PageRange(Integer.parseInt(initialPage), Integer.parseInt(finalPage));
 				

@@ -2,17 +2,12 @@ package com.engineering.printer;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import com.engineering.printer.TextWithIconAdapter.ItemWithIcon;
-
 import android.content.Context;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Adapter;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 public class SeparatedListAdapter extends BaseAdapter {
 	
