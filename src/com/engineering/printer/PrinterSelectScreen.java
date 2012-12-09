@@ -114,9 +114,8 @@ public class PrinterSelectScreen extends Activity {
 			public void onClick(View v) {
 				String initialPage = initialPageEdit.getText().toString();
 				String finalPage = finalPageEdit.getText().toString();
-				PageRange pageRange;
+				PageRange pageRange = null;
 				if(initialPageEdit.isEnabled() && (initialPage.equals("") || finalPage.equals(""))) {
-					pageRange = null;
 					AlertDialog.Builder dialog = new AlertDialog.Builder(context);
 					dialog.setMessage("Incorrect page range!");
 					dialog.setTitle("Error");
@@ -132,7 +131,8 @@ public class PrinterSelectScreen extends Activity {
 					return;
 				}
 				else
-					pageRange = new PageRange(Integer.parseInt(initialPage), Integer.parseInt(finalPage));
+					if(initialPageEdit.isEnabled())
+						pageRange = new PageRange(Integer.parseInt(initialPage), Integer.parseInt(finalPage));
 				
 				// PRINT
 				String chosenPrinter = mSpinner.getSelectedItem().toString();
