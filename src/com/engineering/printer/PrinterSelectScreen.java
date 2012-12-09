@@ -11,6 +11,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -21,6 +23,8 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Checkable;
+import android.widget.EditText;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,14 +35,13 @@ public class PrinterSelectScreen extends Activity {
 	private static final String PRINTER_HISTORY_KEY = "PrinterHistory";
 
 	private Document mDocument;
-	
 	private Checkable mDuplexCheck;
 	private Checkable mFitToPageCheck;
 	private ToggleButton mPageOrientation;
 	private Spinner mSpinner;
 	private Button mPrintbutton;
 	private NumberPicker mNumberPicker;
-	
+	private RadioGroup mRadioPageRange;
 	private HistoryManager printerHistory;
 	private final int REQUEST_LOGIN = 1;
 
@@ -73,19 +76,54 @@ public class PrinterSelectScreen extends Activity {
 		mSpinner = (Spinner) findViewById(R.id.printer_spinner);
 		mDuplexCheck = (Checkable) findViewById(R.id.duplex_check);
 		mFitToPageCheck = (Checkable) findViewById(R.id.fitpage_check);
-
 		mNumberPicker = (NumberPicker) findViewById(R.id.number_picker);
-		
 		mPageOrientation = (ToggleButton) findViewById(R.id.page_orientation);
+		
+		mRadioPageRange = (RadioGroup) findViewById(R.id.radioPageRange);
+		final EditText initialPageEdit = (EditText) findViewById(R.id.initialPage);
+		initialPageEdit.setEnabled(false);
+		final EditText finalPageEdit = (EditText) findViewById(R.id.finalPage);
+		finalPageEdit.setEnabled(false);
+		
+		initialPageEdit.addTextChangedListener(new TextWatcher() {
+	        public void beforeTextChanged(CharSequence s, int start, int count, int after){}
+	        public void onTextChanged(CharSequence s, int start, int before, int count){}
+			public void afterTextChanged(Editable s) {
+				if(finalPageEdit.getText().toString().equals(""))
+					finalPageEdit.setText(s);
+			}
+	    }); 
+		
+		mRadioPageRange.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+			public void onCheckedChanged(RadioGroup group, int checkedId) {
+	            if (checkedId == R.id.radioAllPages) {
+	            	initialPageEdit.setText("");
+	            	initialPageEdit.setEnabled(false);
+	            	finalPageEdit.setText("");
+	                finalPageEdit.setEnabled(false);
+	            } else {
+	            	initialPageEdit.setEnabled(true);
+	                finalPageEdit.setEnabled(true);
+	            }
+	        }
+		});
 		
 		mPrintbutton = (Button) findViewById(R.id.print_button);
 		mPrintbutton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
+				String initialPage = initialPageEdit.getText().toString();
+				String finalPage = finalPageEdit.getText().toString();
+				PageRange pageRange;
+				if(initialPage.equals("") || finalPage.equals(""))
+					pageRange = null;
+				else
+					pageRange = new PageRange(Integer.parseInt(initialPage), Integer.parseInt(finalPage));
+				
 				// PRINT
 				String chosenPrinter = mSpinner.getSelectedItem().toString();
 				printerHistory.putHistory(chosenPrinter);
 				
-				PrinterOptions options = new PrinterOptions(mDuplexCheck.isChecked(), mFitToPageCheck.isChecked(), mNumberPicker.value, mPageOrientation.getText().toString(), null);
+				PrinterOptions options = new PrinterOptions(mDuplexCheck.isChecked(), mFitToPageCheck.isChecked(), mNumberPicker.value, mPageOrientation.getText().toString(), pageRange);
 				PrintJobInfo job = new PrintJobInfo(mDocument, chosenPrinter, options);
 
 				if(!mDocument.isRemote())

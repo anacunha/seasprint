@@ -91,8 +91,10 @@ public class PrintCaller {
 			printCommand.append(" -o fit-to-page");
 		
 		//set page range
-		//printCommand.append(" -o page-ranges=" + printJob.getOptions().getRange().getInitialPage());
-		//printCommand.append("-" + printJob.getOptions().getRange().getFinalPage());
+		if(printJob.getOptions().getRange() != null) {
+			printCommand.append(" -o page-ranges=" + printJob.getOptions().getRange().getInitialPage());
+			printCommand.append("-" + printJob.getOptions().getRange().getFinalPage());
+		}
 		
 		return printCommand.toString();
 	}

@@ -24,8 +24,15 @@ public class PageRange {
 	 * Creates a new PageRange with a initial and final page.
 	 */
 	public PageRange(int initialPage, int finalPage) {
-		this.initialPage = initialPage;
-		this.finalPage = finalPage;
+		if(initialPage > 0)
+			this.initialPage = initialPage;
+		else
+			this.initialPage = 1;
+		
+		if(finalPage >= this.initialPage)
+			this.finalPage = finalPage;
+		else
+			this.finalPage = this.initialPage;
 	}
 
 	/**

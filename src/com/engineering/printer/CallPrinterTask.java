@@ -86,7 +86,7 @@ public class CallPrinterTask extends AsyncTask<PrintJobInfo, Integer, Boolean> {
 		mProgressDialog.dismiss();
 		AlertDialog dialog = new MyAlertDialog(mAct);
 		if (result == true) {
-			dialog.setMessage("The document is successfully sent to printer!");
+			dialog.setMessage("The document was successfully sent to printer!");
 			dialog.setTitle("Done!");
 		} else {
 			dialog.setMessage("Sorry, faild to call printer. :-(");

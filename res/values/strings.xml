@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+<string name="all_pages">All pages</string>
 <string name="app_name">SEASPrint</string>
 <string name="connection_menuitem">Setup Connection</string>
 <string name="duplex_prompt">Duplex printing:</string>
@@ -14,6 +15,7 @@
 <string name="number_prompt">Number of copies:</string>
 <string name="page_orientation">Page Orientation</string>
 <string name="page_orientation_prompt">Page orientation:</string>
+<string name="page_range">Page range</string>
 <string name="page_range_prompt">Page Range:</string>
 <string name="pennkey_label">PennKey</string>
 <string name="pennpwd_label">Password</string>
