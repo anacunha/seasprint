@@ -58,23 +58,31 @@ public class PrintCaller {
 	}
 
 	public void printFile(PrintJobInfo printJob) throws IOException {
+		//Prepare files for lpr command, convert if necessary
+		String doc_lpr = printJob.getRemoteFilename();
+		boolean converted_to_pdf = false;
+		if(printJob.getDocument().IsMicrosoft())
+		{
+			runCommand("libreoffice --headless --invisible --convert-to pdf \"" + printJob.getRemoteFilename() +"\" --outdir=~");
+			doc_lpr = printJob.getRemoteFilename() + ".pdf";
+			converted_to_pdf = true;
+		}
 		if (printJob.getOptions().isTimed()){
 			ArrayList<String> jobs = getTimedPrintCommand(printJob);
 			for (int i=0;i<jobs.size();i++){
-					runCommand(jobs.get(i) + " \"" + printJob.getRemoteFilename() + "\"");
+					runCommand(jobs.get(i) + " \"" + doc_lpr + "\"");
 			}
 
 		}
 		else {
 			String printCommand = getPrintCommand(printJob);
-
-			//Print document
-			if (printJob.getDocument().IsMicrosoft()) {
-				runCommand("unoconv --stdout \"" + printJob.getRemoteFilename() + "\" | " + printCommand);
-			}
-			else {
-				runCommand(printCommand + " \"" + printJob.getRemoteFilename() + "\"");
-			}
+			runCommand(printCommand + " \"" + doc_lpr + "\"");
+		}
+		
+		//Cleanup temporary files.
+		if(converted_to_pdf)
+		{
+			runCommand("rm \"" + doc_lpr + "\"");
 		}
 	}
 

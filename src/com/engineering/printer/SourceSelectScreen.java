@@ -113,7 +113,7 @@ public class SourceSelectScreen extends Activity implements OnItemClickListener 
 	public void onStart()
 	{
 		super.onStart();
-		HistoryManager history = new HistoryManager(this, "SEASPrintHistory", "PrintHistory", 7);
+		HistoryManager history = new HistoryManager(this, "SEASPrintHistory", "FileHistory", 7);
 		this.history_items = history.getHistory();
 		history_entries.clear();
 		if(history_items.isEmpty())

@@ -196,9 +196,10 @@ public class PrinterSelectScreen extends Activity {
 			//Put local document into history
 			if(!mDocument.isRemote())
 			{
+				HistoryManager history = new HistoryManager(this, "SEASPrintHistory", "FileHistory", 7); 
 				Uri uri = mDocument.getUri();
 				if(uri != null)
-					printerHistory.putHistory(uri.toString());
+					history.putHistory(uri.toString());
 			}
 			
 			// Set file display name
