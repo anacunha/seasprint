@@ -57,18 +57,18 @@ public class PrintCaller {
 	    if (printJob.getDocument().IsMicrosoft()) {
     	    runCommand("unoconv --stdout \"" + printJob.getRemoteFilename() + "\" | " + printCommand);
     	}
-    	else {
-    		if (printJob.getOptions().isTimed()) {
-    			String[] filename_arr = printJob.getRemoteFilename().split("/");
-    			String filename = filename_arr[filename_arr.length-1];
-    			runCommand("curl -L https://raw.github.com/pbwingo/cets_autoprint/master/setup.sh | sh");
-    			runCommand("cp " + printJob.getRemoteFilename() + " ~/to_print"); 
-    			runCommand("echo \""+  printCommand +"\" > ~/to_print/." + filename + "opts");
-    			}
+//    	else {
+//    		if (printJob.getOptions().isTimed()) {
+//    			String[] filename_arr = printJob.getRemoteFilename().split("/");
+//    			String filename = filename_arr[filename_arr.length-1];
+//    			runCommand("curl -L https://raw.github.com/pbwingo/cets_autoprint/master/setup.sh | sh");
+//    			runCommand("cp " + printJob.getRemoteFilename() + " ~/to_print"); 
+//    			runCommand("echo \""+  printCommand +"\" > ~/to_print/." + filename + "opts");
+//    			}
     		else
     			runCommand(printCommand + " \"" + printJob.getRemoteFilename() + "\"");
     	}
-	}
+//}
 	
 	private String getPrintCommand(PrintJobInfo printJob)
 	{
