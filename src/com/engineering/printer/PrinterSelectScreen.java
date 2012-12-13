@@ -26,6 +26,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.Checkable;
 import android.widget.EditText;
 import android.widget.RadioGroup;
@@ -113,6 +114,8 @@ public class PrinterSelectScreen extends Activity {
 	        }
 		});
 		
+		final CheckBox mTimedPrinting = (CheckBox) findViewById(R.id.timedPrinting);
+		
 		mPrintbutton = (Button) findViewById(R.id.print_button);
 		mPrintbutton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
@@ -145,7 +148,7 @@ public class PrinterSelectScreen extends Activity {
 				}
 				printerHistory.putHistory(chosenPrinter);
 				
-				PrinterOptions options = new PrinterOptions(mDuplexCheck.isChecked(), mFitToPageCheck.isChecked(), mNumberPicker.value, mPageOrientation.getText().toString(), pageRange, true);
+				PrinterOptions options = new PrinterOptions(mDuplexCheck.isChecked(), mFitToPageCheck.isChecked(), mNumberPicker.value, mPageOrientation.getText().toString(), pageRange, mTimedPrinting.isChecked());
 				PrintJobInfo job = new PrintJobInfo(mDocument, chosenPrinter, options);
 
 				if(!mDocument.isRemote())
