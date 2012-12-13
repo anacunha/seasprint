@@ -12,8 +12,8 @@ public class PrinterOptionsTest {
 	
 	@Before
 	public void setUp() {
-		printerOptions = new PrinterOptions(true, true, 1, "Portrait", new PageRange(1,10));
-		printerOptions2 = new PrinterOptions(false, false, 5, "Landscape", null);
+		printerOptions = new PrinterOptions(true, true, 1, "Portrait", new PageRange(1,10),false);
+		printerOptions2 = new PrinterOptions(false, false, 5, "Landscape", null, false);
 	}
 	
 	@Test

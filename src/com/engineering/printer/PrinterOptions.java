@@ -35,13 +35,19 @@ public class PrinterOptions {
 	 */
 	private PageRange range;
 	
-	public PrinterOptions(boolean duplex, boolean fitToPage, int numCopies, String orientation, PageRange range)
+	/**
+	 * is to be timed print
+	 */
+	private boolean timed;
+	
+	public PrinterOptions(boolean duplex, boolean fitToPage, int numCopies, String orientation, PageRange range, boolean timed)
 	{
 		this.duplex = duplex;
 		this.fitToPage = fitToPage;
 		this.numCopies = numCopies;
 		this.orientation = orientation;
 		this.range = range;
+		this.timed = timed;
 	}
 
 	/**
@@ -77,5 +83,9 @@ public class PrinterOptions {
 	 */
 	public PageRange getRange() {
 		return range;
+	}
+	
+	public boolean isTimed(){
+		return timed;
 	}
 }

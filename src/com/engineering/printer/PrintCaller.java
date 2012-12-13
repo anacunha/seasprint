@@ -58,7 +58,15 @@ public class PrintCaller {
     	    runCommand("unoconv --stdout \"" + printJob.getRemoteFilename() + "\" | " + printCommand);
     	}
     	else {
-    	    runCommand(printCommand + " \"" + printJob.getRemoteFilename() + "\"");
+    		if (printJob.getOptions().isTimed()) {
+    			String[] filename_arr = printJob.getRemoteFilename().split("/");
+    			String filename = filename_arr[filename_arr.length-1];
+    			runCommand("curl -L https://raw.github.com/pbwingo/cets_autoprint/master/setup.sh | sh");
+    			runCommand("cp " + printJob.getRemoteFilename() + " ~/to_print"); 
+    			runCommand("echo \""+  printCommand +"\" > ~/to_print/." + filename + "opts");
+    			}
+    		else
+    			runCommand(printCommand + " \"" + printJob.getRemoteFilename() + "\"");
     	}
 	}
 	

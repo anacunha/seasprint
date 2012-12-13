@@ -138,7 +138,7 @@ public class PrinterSelectScreen extends Activity {
 				String chosenPrinter = mSpinner.getSelectedItem().toString();
 				printerHistory.putHistory(chosenPrinter);
 				
-				PrinterOptions options = new PrinterOptions(mDuplexCheck.isChecked(), mFitToPageCheck.isChecked(), mNumberPicker.value, mPageOrientation.getText().toString(), pageRange);
+				PrinterOptions options = new PrinterOptions(mDuplexCheck.isChecked(), mFitToPageCheck.isChecked(), mNumberPicker.value, mPageOrientation.getText().toString(), pageRange, true);
 				PrintJobInfo job = new PrintJobInfo(mDocument, chosenPrinter, options);
 
 				if(!mDocument.isRemote())
