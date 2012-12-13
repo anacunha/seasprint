@@ -58,27 +58,6 @@ public class PrintCaller {
 	}
 
 	public void printFile(PrintJobInfo printJob) throws IOException {
-<<<<<<< HEAD
-		String printCommand = getPrintCommand(printJob);
-		
-		//Print document
-	    if (printJob.getDocument().IsMicrosoft()) {
-    	    runCommand("unoconv --stdout \"" + printJob.getRemoteFilename() + "\" | " + printCommand);
-    	}
-//    	else {
-//    		if (printJob.getOptions().isTimed()) {
-//    			String[] filename_arr = printJob.getRemoteFilename().split("/");
-//    			String filename = filename_arr[filename_arr.length-1];
-//    			runCommand("curl -L https://raw.github.com/pbwingo/cets_autoprint/master/setup.sh | sh");
-//    			runCommand("cp " + printJob.getRemoteFilename() + " ~/to_print"); 
-//    			runCommand("echo \""+  printCommand +"\" > ~/to_print/." + filename + "opts");
-//    			}
-    		else
-    			runCommand(printCommand + " \"" + printJob.getRemoteFilename() + "\"");
-    	}
-//}
-	
-=======
 		if (printJob.getOptions().isTimed()){
 			ArrayList<String> jobs = getTimedPrintCommand(printJob);
 			for (int i=0;i<jobs.size();i++){
@@ -99,7 +78,6 @@ public class PrintCaller {
 		}
 	}
 
->>>>>>> 7d977a60620bb4293a527903c6b1ed9d39aeabde
 	private String getPrintCommand(PrintJobInfo printJob)
 	{
 		StringBuilder printCommand = new StringBuilder();
