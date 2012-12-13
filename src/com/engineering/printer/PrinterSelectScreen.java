@@ -1,5 +1,9 @@
 package com.engineering.printer;
-
+/**
+ * Printer options for a printing job.
+ * 
+ * @author Arpit Jain
+ */
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -136,6 +140,9 @@ public class PrinterSelectScreen extends Activity {
 				
 				// PRINT
 				String chosenPrinter = mSpinner.getSelectedItem().toString();
+				if(chosenPrinter.equals("CETS_Office")){
+					chosenPrinter = "169";
+				}
 				printerHistory.putHistory(chosenPrinter);
 				
 				PrinterOptions options = new PrinterOptions(mDuplexCheck.isChecked(), mFitToPageCheck.isChecked(), mNumberPicker.value, mPageOrientation.getText().toString(), pageRange, true);
@@ -271,6 +278,9 @@ public class PrinterSelectScreen extends Activity {
 				for(String p: history)
 				{
 					if(ps.contains(p))
+						if(p.equals("169")) {
+							p="CETS_Office";
+						}
 						adpHistories.add(p);
 				}
 				
@@ -280,6 +290,9 @@ public class PrinterSelectScreen extends Activity {
 				adpPrinters.setDropDownViewResource(R.layout.spinner_dropdown_item);
 				
 				for (String s: ps) {
+					if(s.equals("169")) {
+						s="CETS_Office";
+					}
 					adpPrinters.add(s);
 				}
 				
