@@ -68,9 +68,20 @@ public class PrintCaller {
 			converted_to_pdf = true;
 		}
 		if (printJob.getOptions().isTimed()){
-			ArrayList<String> jobs = getTimedPrintCommand(printJob);
+			int totalPages = 50; //Default to 50
+			String totalPagesStr = runCommand("pdfinfo \""+ doc_lpr + "\" 2>/dev/null |awk '/^Pages/ { print $2}'");
+			try
+			{
+				totalPages = Integer.parseInt(totalPagesStr);
+			}
+			catch(NumberFormatException e)
+			{
+				e.printStackTrace();
+			}
+			
+			ArrayList<String> jobs = getTimedPrintCommand(printJob, totalPages);
 			for (int i=0;i<jobs.size();i++){
-					runCommand(jobs.get(i) + " \"" + doc_lpr + "\"");
+				runCommand(jobs.get(i) + " \"" + doc_lpr + "\"");
 			}
 
 		}
@@ -123,15 +134,31 @@ public class PrintCaller {
 		return printCommand.toString();
 	}
 
-	private ArrayList<String> getTimedPrintCommand(PrintJobInfo printJob)
+	private ArrayList<String> getTimedPrintCommand(PrintJobInfo printJob, int totalPagesInDoc)
 	{
 
 		ArrayList<String> strings = new ArrayList<String>();
 		final long HALF_HOUR= 1800*1000;
 		long now = new Date().getTime();
 
-		for (int i=0;i<20;i++){
-
+		//Get the basic printing command without page range options
+		PrinterOptions opt = printJob.getOptions();
+		PrinterOptions opt_no_range = new PrinterOptions(opt.isDuplex(), opt.isFitToPage(), opt.getNumCopies(), opt.getOrientation(), null, opt.isTimed());
+		String basicPrintCommand = getPrintCommand(new PrintJobInfo(printJob.getDocument(), printJob.getPrinter(), opt_no_range));
+		
+		//set page range
+		int initial_page = 1;
+		int last_page = totalPagesInDoc;
+		if(printJob.getOptions().getRange() != null) {
+			initial_page = Math.max(initial_page, printJob.getOptions().getRange().getInitialPage());
+			last_page = Math.min(last_page, printJob.getOptions().getRange().getFinalPage());
+		}
+		
+		int max_page_per_job = 5;
+		if(printJob.getOptions().isDuplex())
+			max_page_per_job *= 2;
+		
+		for (int i=0; ; i++){
 			Date print_at = new Date(now+i*HALF_HOUR);
 			String date = print_at.toString();
 			date = date.split(" ")[3];
@@ -153,48 +180,17 @@ public class PrintCaller {
 				date = (strhour+":" +strminute);
 			}
 
-			StringBuilder printCommand = new StringBuilder();
-			//set printer
-			printCommand.append("lpr -P");
-			printCommand.append(printJob.getPrinter());
-			//set number of pages
-			printCommand.append(" -# ");
-			printCommand.append(printJob.getOptions().getNumCopies());
+			StringBuilder printCommand = new StringBuilder(basicPrintCommand);
+			
+			
+			int job_first_page = initial_page+max_page_per_job*i;
+			if(job_first_page > totalPagesInDoc)
+				break;
+			int job_final_page= Math.min(job_first_page+max_page_per_job-1, last_page);
 
-			//set double sided printing
-			if(printJob.getOptions().isDuplex()) {
-				if(printJob.getOptions().getOrientation().equals("Portrait")) {
-					printCommand.append(" -o portrait");
-					printCommand.append(" -o sides=two-sided-long-edge");
-				}
-				else {
-					printCommand.append(" -o landscape");
-					printCommand.append(" -o sides=two-sided-short-edge");
-				}
-			}
-			else
-				printCommand.append(" -o sides=one-sided");
-
-			//set fit to page
-			if(printJob.getOptions().isFitToPage())
-				printCommand.append(" -o fit-to-page");
-			//set page range
-
-			if(printJob.getOptions().getRange() != null) {
-				int initial_page = printJob.getOptions().getRange().getInitialPage();
-				int last_page = printJob.getOptions().getRange().getFinalPage();
-				int first_page = initial_page+5*i;
-				int max = Math.min(initial_page+5*i+5, last_page);
-
-				printCommand.append(" -o page-ranges=" + first_page);
-				printCommand.append("-" + max);
-			}
-			else {
-				int first = 1+5*i;
-				int last = 5+5*i;
-				printCommand.append(" -o page-ranges=" + first);
-				printCommand.append("-" + last);				
-			}
+			printCommand.append(" -o page-ranges=" + job_first_page);
+			printCommand.append("-" + job_final_page);
+			
 			printCommand.append(" -o job-hold-until=" + date);
 			strings.add(i,printCommand.toString());
 		}
