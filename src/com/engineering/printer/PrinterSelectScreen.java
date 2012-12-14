@@ -314,7 +314,7 @@ public class PrinterSelectScreen extends Activity {
 				}
 				else
 				{
-					int defaultPrinter = adpPrinters.getPosition("169");
+					int defaultPrinter = adpPrinters.getPosition("CETS_Office");
 					defaultPrinter += 1;//The "ALL PRINTERS" header
 					mSpinner.setSelection(defaultPrinter);
 				}
