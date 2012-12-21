@@ -10,8 +10,8 @@ public class PrinterOptionsTest extends AndroidTestCase{
 	private PrinterOptions printerOptions2;
 	
 	public void setUp() {
-		printerOptions = new PrinterOptions(true, true, 1, "Portrait", new PageRange(1,10));
-		printerOptions2 = new PrinterOptions(false, false, 5, "Landscape", null);
+		printerOptions = new PrinterOptions(true, true, 1, "Portrait", new PageRange(1,10), true);
+		printerOptions2 = new PrinterOptions(false, false, 5, "Landscape", null, false);
 	}
 	
 	public void testIsDuplex() {
@@ -54,5 +54,13 @@ public class PrinterOptionsTest extends AndroidTestCase{
 
 	public void testPageRangeNull() {
 		assertNull(printerOptions2.getRange());
+	}
+	
+	public void testIsTimed() {
+		assertTrue(printerOptions.isTimed());
+	}
+	
+	public void testIsNotTimed() {
+		assertFalse(printerOptions2.isTimed());
 	}
 }

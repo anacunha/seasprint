@@ -15,7 +15,7 @@ public class PrintJobInfoTest extends AndroidTestCase {
 	protected void setUp()
 	{
 		doc = new Document(this.getContext(),"/");
-		opt = new PrinterOptions(true, true, 1, "", new PageRange(1,1));
+		opt = new PrinterOptions(true, true, 1, "", new PageRange(1,1), true);
 		info = new PrintJobInfo(doc, "169", opt);
 	}
 	

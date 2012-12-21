@@ -28,4 +28,6 @@
 <string name="printer_prompt">Please select a printer:</string>
 <string name="saveinfo_label">Save my info</string>
 <string name="timed_printing_prompt">Eniac Timed Printing</string>
+<string name="title_activity_file_picker"></string>
+<string name="title_activity_file_picker_auth"></string>
 </resources>
